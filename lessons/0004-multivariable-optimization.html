@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 0004: 多变量无约束优化 / Multivariable Unconstrained Optimization</title>
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+
+<h1>0004 · 多变量无约束优化<br><small style="font-size:1.1rem;color:var(--muted);">Multivariable Unconstrained Optimization</small></h1>
+<div class="lesson-meta">
+  基于 Lecture 2/4 (Lin, JNU) &amp; Meerschaert §2.1–2.2 · 预计阅读 30 分钟
+</div>
+
+<h2>1. From one variable to many / 从单变量到多变量</h2>
+
+<p>单变量：一个决策变量 x，f′(x)=0 → 候选点。<br>
+多变量：n 个决策变量 (x₁,…,xₙ)，<strong>所有偏导数同时为零</strong> → 候选点。</p>
+
+<div class="concept-box">
+  <strong>Two key differences from single-variable / 两个核心区别：</strong><br>
+  1. You solve a <strong>system of n equations</strong> (not just one) — ∇f(x) = 0 / 解 n 个方程的方程组<br>
+  2. You check a <strong>matrix</strong> (the Hessian) — not just one number f″(x) / 用 Hessian 矩阵判断极值类型
+</div>
+
+<h2>2. 彩电生产问题 / Color TV Problem</h2>
+
+<h3>Step 1: Ask the question / 提出问题</h3>
+
+<div class="formula-block">
+<strong>Variables / 变量：</strong><br>
+x₁ = sales of 19-inch sets / 19寸电视销量<br>
+x₂ = sales of 21-inch sets / 21寸电视销量<br><br>
+
+<strong>Assumptions / 假设（价格竞争模型 / competitive pricing model）：</strong><br>
+p = <strong>339 − 0.01x₁ − 0.003x₂</strong> &nbsp; (price of 19-inch / 19寸售价)<br>
+q = <strong>399 − 0.004x₁ − 0.01x₂</strong> &nbsp; (price of 21-inch / 21寸售价)<br>
+<i>Cross-elasticity / 交叉弹性: each product affects the other's price.</i><br><br>
+R = p·x₁ + q·x₂ &nbsp; (revenue / 收入)<br>
+C = 400,000 + 195x₁ + 225x₂ &nbsp; (cost / 成本)<br>
+P = R − C &nbsp; (profit / 利润)<br><br>
+
+<strong>Objective / 目标：</strong>Maximize P, subject to x₁ ≥ 0, x₂ ≥ 0
+</div>
+
+<h3>Step 3: Formulate the model / 列出模型</h3>
+
+<div class="formula-block">
+Expand and simplify / 展开并简化：<br>
+P = <strong>−0.01x₁² − 0.007x₁x₂ − 0.01x₂² + 144x₁ + 174x₂ − 400,000</strong><br><br>
+The <strong>cross-term −0.007x₁x₂</strong> captures the interaction: selling more of one product lowers the other's price.
+</div>
+
+<h3>Step 4: Solve / 求解 — Set gradient to zero</h3>
+
+<div class="formula-block">
+<strong>∂P/∂x₁ = −0.02x₁ − 0.007x₂ + 144 = 0</strong><br>
+<strong>∂P/∂x₂ = −0.007x₁ − 0.02x₂ + 174 = 0</strong><br><br>
+Solve the linear system / 解线性方程组：<br>
+x₁ ≈ <strong>4,735</strong>, x₂ ≈ <strong>7,043</strong><br>
+Maximum profit / 最大利润：P ≈ <strong>$553,641</strong>
+</div>
+
+<h2>3. Hessian Matrix / Hessian 矩阵 — The Multivariable "Second Derivative"</h2>
+
+<div class="formula-block">
+<strong>H = [∂²f/∂x₁²  &nbsp; ∂²f/∂x₁∂x₂]</strong><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<strong>[∂²f/∂x₂∂x₁ &nbsp; ∂²f/∂x₂² ]</strong><br><br>
+For the TV problem / 彩电问题：<br>
+∂²P/∂x₁² = −0.02, ∂²P/∂x₂² = −0.02, ∂²P/∂x₁∂x₂ = −0.007<br>
+H = [−0.02 &nbsp; −0.007]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[−0.007 &nbsp; −0.02 ]
+</div>
+
+<div class="concept-box">
+  <strong>Second-order sufficient conditions (n=2) / 二阶充分条件速查：</strong><br>
+  Leading principal minors / 顺序主子式：<br>
+  Δ₁ = ∂²f/∂x₁² &nbsp;&nbsp;|&nbsp;&nbsp; Δ₂ = det(H) = (∂²f/∂x₁²)(∂²f/∂x₂²) − (∂²f/∂x₁∂x₂)²<br><br>
+  • Δ₁ > 0, Δ₂ > 0 → H <strong>positive definite</strong> → <strong>local minimum</strong> / 局部极小<br>
+  • Δ₁ &lt; 0, Δ₂ > 0 → H <strong>negative definite</strong> → <strong>local maximum</strong> / 局部极大<br>
+  • Δ₂ &lt; 0 → H <strong>indefinite</strong> → <strong>saddle point</strong> / 鞍点<br>
+  • Δ₂ = 0 → test <strong>inconclusive</strong> / 无法判定<br><br>
+  For our TV problem: Δ₁ = −0.02 < 0 ✓, Δ₂ = 0.000351 > 0 ✓ → <strong>H negative definite → global maximum</strong>
+</div>
+
+<h2>4. Multivariable Sensitivity / 多变量灵敏度</h2>
+
+<div class="formula-block">
+Sensitivity to price elasticity a / 对价格弹性 a 的灵敏度：<br>
+x₁(a) = 1,662,000/(40,000a − 49)<br>
+<strong>S(x₁, a) ≈ −1.1</strong>, &nbsp; <strong>S(x₂, a) ≈ 0.27</strong><br><br>
+Key trick / 关键技巧：at the optimum, <strong>∂y/∂x₁ = ∂y/∂x₂ = 0</strong> (first-order conditions), so<br>
+<strong>dy/da = ∂y/∂a</strong> (the chain rule simplifies dramatically!).
+</div>
+
+<div class="quiz-block">
+  <div class="quiz-header">Retrieval Practice / 检索练习</div>
+  <div class="quiz-body">
+    <div class="quiz-q" id="q1">
+      <p><strong>Q1.</strong> Does ∇f = 0 guarantee a maximum in multivariable optimization?</p>
+      <ul class="quiz-options">
+        <li><button onclick="check(this, 'A', 'q1-fb')">A. Yes / 是的</button></li>
+        <li><button onclick="check(this, 'B', 'q1-fb')">B. No — ∇f=0 gives stationary points; need Hessian to classify (max/min/saddle). Global optimum may also lie on the boundary / 不一定，需要 Hessian 判定极大/极小/鞍点，全局最值还可能在边界</button></li>
+        <li><button onclick="check(this, 'C', 'q1-fb')">C. Only possible outcomes are max or min / 只能是极大或极小</button></li>
+        <li><button onclick="check(this, 'D', 'q1-fb')">D. Saddle points don't exist in multivariable functions / 多变量函数不存在鞍点</button></li>
+      </ul>
+      <div class="quiz-feedback" id="q1-fb"></div>
+    </div>
+    <div class="quiz-q" id="q2">
+      <p><strong>Q2.</strong> What does a negative definite Hessian imply?</p>
+      <ul class="quiz-options">
+        <li><button onclick="check(this, 'A', 'q2-fb')">A. Saddle point / 鞍点</button></li>
+        <li><button onclick="check(this, 'B', 'q2-fb')">B. f is strictly concave → any stationary point is the unique global maximum / 严格凹函数，任何驻点就是唯一的全局最大值</button></li>
+        <li><button onclick="check(this, 'C', 'q2-fb')">C. Local minimum / 局部极小</button></li>
+        <li><button onclick="check(this, 'D', 'q2-fb')">D. Need more data to determine / 需要更多数据</button></li>
+      </ul>
+      <div class="quiz-feedback" id="q2-fb"></div>
+    </div>
+  </div>
+</div>
+
+<div class="nav">
+  <a href="0003-computational-methods.html">← Prev: 0003 · Computational Methods</a>
+  <a href="0005-lagrange-multipliers.html">Next: 0005 · Lagrange Multipliers →</a>
+</div>
+
+<script>
+function check(btn, answer, fbId) {
+  const fb = document.getElementById(fbId);
+  const buttons = btn.parentElement.parentElement.querySelectorAll('button');
+  buttons.forEach(b => { b.disabled = true; b.classList.remove('correct', 'wrong'); });
+  const correctAnswers = { 'q1-fb': 'B', 'q2-fb': 'B' };
+  const explanations = {
+    'q1-fb': { A:'✗ f(x,y)=x²−y² has ∇f(0,0)=0 but (0,0) is a saddle point.', B:'✓ Correct. ∇f=0 gives candidates only. Hessian classification is essential. Boundaries must also be checked.', C:'✗ Saddle points exist in multivariable functions.', D:'✗ Saddle points are common in multivariable settings.' },
+    'q2-fb': { A:'✗ Negative definite → max, not saddle.', B:'✓ Correct. If H is negative definite everywhere, f is strictly concave — very strong guarantee.', C:'✗ Negative definite → max, not min.', D:'✗ The Hessian gives a definitive answer.' }
+  };
+  const correct = correctAnswers[fbId];
+  const expl = explanations[fbId];
+  buttons.forEach(b => { if (b.textContent.trim().charAt(0) === correct) b.classList.add('correct'); });
+  if (answer === correct) { btn.classList.add('correct'); fb.innerHTML = '✓ ' + expl[answer]; }
+  else { btn.classList.add('wrong'); fb.innerHTML = '✗ ' + (expl[answer] || '') + '<br><br><strong>✓ Correct:</strong> ' + expl[correct]; }
+}
+</script>
+
+</body>
+</html>

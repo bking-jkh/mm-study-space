@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 0009: 应用专题 / Applications</title>
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+
+<h1>0009 · 应用专题：图像去噪 & 投资组合优化<br><small style="font-size:1.1rem;color:var(--muted);">Image Denoising & Portfolio Optimization</small></h1>
+<div class="lesson-meta">
+  基于 Lecture 5 &amp; Lecture 6/9 (Lin, JNU) · 预计阅读 20 分钟
+</div>
+
+<h2>应用一 / Application I: Image Denoising / 图像去噪</h2>
+
+<h3>Digital image basics / 数字图像基础</h3>
+<table style="width:100%; border-collapse:collapse; margin:1rem 0;">
+  <tr style="border-bottom:2px solid var(--accent);"><th style="text-align:left; padding:0.4rem;">Type / 类型</th><th style="text-align:left; padding:0.4rem;">Per pixel</th><th style="text-align:left; padding:0.4rem;">Typical use</th></tr>
+  <tr style="border-bottom:1px solid #eee;"><td style="padding:0.4rem;">Binary / 二值</td><td style="padding:0.4rem;">1 bit (black/white)</td><td style="padding:0.4rem;">Text scans, fingerprints / 文本扫描、指纹</td></tr>
+  <tr style="border-bottom:1px solid #eee;"><td style="padding:0.4rem;">Grayscale / 灰度</td><td style="padding:0.4rem;">8 bits (0–255)</td><td style="padding:0.4rem;">X-rays, document scans / X光、文档扫描</td></tr>
+  <tr><td style="padding:0.4rem;">RGB / 真彩色</td><td style="padding:0.4rem;">24 bits (3×8)</td><td style="padding:0.4rem;">Color photographs / 彩色照片</td></tr>
+</table>
+
+<h3>Vectorization / 向量化</h3>
+<div class="formula-block">
+Grayscale image is an m×n matrix V ∈ ℝ^{m×n}.<br>
+Flatten into a vector / 拉直为向量：<strong>vec(V) ∈ ℝ^{mn}</strong><br>
+This converts image processing into a <strong>vector-space optimization problem</strong>.
+</div>
+
+<h3>Denoising optimization model / 去噪优化模型</h3>
+<div class="formula-block">
+Let f = observed noisy image, u = unknown clean image.<br>
+<strong>minᵤ &nbsp; ½‖u − f‖₂² + τ·φ(u)</strong><br><br>
+• <strong>½‖u−f‖₂²（data fidelity term / 数据保真项）：</strong>don't stray too far from observation<br>
+• <strong>φ(u)（regularization term / 正则化项）：</strong>encodes prior knowledge (e.g., natural images are smooth)<br>
+• <strong>τ（regularization parameter / 正则化参数）：</strong>τ large → more smoothing but may blur details; τ small → faithful but noisy<br><br>
+→ Solved by FPPA since φ is often non-smooth (e.g., ℓ₁ norm for piecewise smoothness).
+</div>
+
+<hr style="margin: 1.5rem 0; border: none; border-top: 2px solid var(--accent);">
+
+<h2>应用二 / Application II: Portfolio Optimization / 投资组合优化</h2>
+
+<h3>Markowitz Mean-Variance Model (OMV) / Markowitz 均值-方差模型</h3>
+<div class="formula-block">
+N assets, w = portfolio weights (what fraction to invest in each).<br>
+<strong>min_w &nbsp; wᵀΣw</strong> &nbsp; (minimize portfolio variance = risk / 最小化组合方差（风险）)<br>
+<strong>s.t. &nbsp; wᵀμ = ρ</strong> &nbsp;&nbsp; (target expected return / 目标收益率)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>wᵀ1ₙ = 1</strong> &nbsp; (fully invested / 全额投资，权重和为1)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>w ≥ 0</strong> &nbsp;&nbsp;&nbsp;&nbsp; (no short selling / 不可卖空)<br><br>
+This is a <strong>quadratic program</strong> / 二次规划：quadratic objective + linear constraints.<br>
+Connects to our Lagrange multipliers (equality constraints) and inequality handling.
+</div>
+
+<h3>Sparse & Stable Markowitz Portfolio (SSMP)</h3>
+<div class="formula-block">
+<strong>min_w &nbsp; 1/T·‖Rw − ρ1_T‖₂² + τ‖w‖₁</strong><br>
+s.t. &nbsp; wᵀμ̂ = ρ, wᵀ1ₙ = 1<br><br>
+• ℓ₂ term: sample-based risk (avoids estimating Σ)<br>
+• <strong>ℓ₁ term ‖w‖₁:</strong> encourages <strong>sparsity</strong> / 鼓励稀疏性 — most wᵢ = 0, invest in only a few assets<br>
+→ More practical: real portfolios don't hold 500 stocks!<br>
+→ Solved by <strong>FPPA</strong> (ℓ₁ is non-smooth, needs proximity operator).
+</div>
+
+<div class="concept-box">
+  <strong>ℓ₁ vs ℓ₂ regularization / ℓ₁ 与 ℓ₂ 正则化对比：</strong><br>
+  • ℓ₂ (ridge): shrinks coefficients but none become exactly zero — all assets held<br>
+  • ℓ₁ (LASSO): non-differentiability at zero induces <strong>sparsity</strong> — most weights become exactly zero<br>
+  → Both image denoising and portfolio optimization exploit this property of ℓ₁.<br>
+  → FPPA is the algorithmic workhorse for solving these composite (smooth + ℓ₁) problems.
+</div>
+
+<div class="quiz-block">
+  <div class="quiz-header">Retrieval Practice</div>
+  <div class="quiz-body">
+    <div class="quiz-q" id="q1">
+      <p><strong>Q1.</strong> In image denoising, what role does the regularization parameter τ play?</p>
+      <ul class="quiz-options">
+        <li><button onclick="check(this, 'A', 'q1-fb')">A. Controls the number of iterations / 控制迭代次数</button></li>
+        <li><button onclick="check(this, 'B', 'q1-fb')">B. Balances data fidelity and smoothness: τ large → stronger denoising but may lose detail; τ small → more faithful to observation but noisier / 平衡数据保真和光滑性</button></li>
+        <li><button onclick="check(this, 'C', 'q1-fb')">C. Determines image size / 确定图像尺寸</button></li>
+        <li><button onclick="check(this, 'D', 'q1-fb')">D. Selects the noise type / 选择噪声类型</button></li>
+      </ul>
+      <div class="quiz-feedback" id="q1-fb"></div>
+    </div>
+    <div class="quiz-q" id="q2">
+      <p><strong>Q2.</strong> What type of optimization problem is the Markowitz OMV model?</p>
+      <ul class="quiz-options">
+        <li><button onclick="check(this, 'A', 'q2-fb')">A. Linear programming / 线性规划</button></li>
+        <li><button onclick="check(this, 'B', 'q2-fb')">B. Quadratic programming: quadratic objective (wᵀΣw) + linear constraints (wᵀμ=ρ, wᵀ1=1, w≥0) / 二次规划：二次目标+线性约束</button></li>
+        <li><button onclick="check(this, 'C', 'q2-fb')">C. Unconstrained nonlinear optimization / 无约束非线性优化</button></li>
+        <li><button onclick="check(this, 'D', 'q2-fb')">D. Integer programming / 整数规划</button></li>
+      </ul>
+      <div class="quiz-feedback" id="q2-fb"></div>
+    </div>
+  </div>
+</div>
+
+<div class="nav">
+  <a href="0008-multicollinearity.html">← Prev: 0008 · Multicollinearity</a>
+  <span><a href="0001-five-step-method.html">Back to Lesson 0001</a></span>
+</div>
+
+<script>
+function check(btn, answer, fbId) {
+  const fb = document.getElementById(fbId);
+  const buttons = btn.parentElement.parentElement.querySelectorAll('button');
+  buttons.forEach(b => { b.disabled = true; b.classList.remove('correct', 'wrong'); });
+  const correctAnswers = { 'q1-fb': 'B', 'q2-fb': 'B' };
+  const explanations = {
+    'q1-fb': { A:'✗ τ is a model parameter, not an algorithm parameter.', B:'✓ Correct. τ controls the trade-off between fidelity and regularization — the universal role of regularization parameters across all domains.', C:'✗', D:'✗' },
+    'q2-fb': { A:'✗ The objective wᵀΣw is quadratic.', B:'✓ Correct. Quadratic objective (convex if Σ is positive semi-definite) + linear equality and inequality constraints.', C:'✗ There are constraints (return target, budget, no short selling).', D:'✗ Weights are continuous fractions, not integers.' }
+  };
+  const correct = correctAnswers[fbId];
+  const expl = explanations[fbId];
+  buttons.forEach(b => { if (b.textContent.trim().charAt(0) === correct) b.classList.add('correct'); });
+  if (answer === correct) { btn.classList.add('correct'); fb.innerHTML = '✓ ' + expl[answer]; }
+  else { btn.classList.add('wrong'); fb.innerHTML = '✗ ' + (expl[answer] || '') + '<br><br><strong>✓ Correct:</strong> ' + expl[correct]; }
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>数学建模 备考教学空间</title>
+  <link rel="stylesheet" href="assets/style.css">
+  <style>
+    .hero { text-align: center; padding: 2rem 0 1rem; }
+    .hero h1 { font-size: 2rem; margin-bottom: 0.3rem; }
+    .hero p { color: var(--muted); font-size: 1rem; }
+    .lesson-list { margin: 1.5rem 0; }
+    .lesson-card {
+      display: block;
+      padding: 1rem 1.2rem;
+      margin: 0.6rem 0;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      text-decoration: none;
+      color: var(--text);
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .lesson-card:hover { border-color: var(--accent); background: #fdfdf8; }
+    .lesson-card .num { font-size: 0.8rem; color: var(--accent); font-weight: 600; }
+    .lesson-card .title { font-size: 1.15rem; font-weight: 600; margin: 0.2rem 0; }
+    .lesson-card .en { font-size: 0.85rem; color: var(--muted); font-style: italic; }
+    .lesson-card .topics { font-size: 0.85rem; color: var(--muted); margin-top: 0.3rem; }
+    .links { margin: 2rem 0; text-align: center; }
+    .links a { color: var(--accent); margin: 0 0.8rem; }
+    .progress { margin: 1rem 0; font-size: 0.85rem; color: var(--muted); }
+  </style>
+</head>
+<body>
+
+<div class="hero">
+  <h1>Mathematical Modeling</h1>
+  <p>数学建模 期末备考 · 9 课 · 中英双语</p>
+  <p class="progress">暨南大学数学系 · 林义尊 · 2026</p>
+</div>
+
+<div class="concept-box">
+  <h4>考试信息</h4>
+  <p>期末占比 60%，闭卷考试。重点：五步建模法、单变量/多变量优化、Newton 法、梯度法、Lagrange 乘数法、线性回归。</p>
+</div>
+
+<h2>课程目录</h2>
+
+<div class="lesson-list">
+  <a class="lesson-card" href="lessons/0001-five-step-method.html">
+    <div class="num">第 1 课</div>
+    <div class="title">五步建模法</div>
+    <div class="en">The Five-Step Method</div>
+    <div class="topics">Ask → Select → Formulate → Solve → Answer · 猪出售问题</div>
+  </a>
+
+  <a class="lesson-card" href="lessons/0002-sensitivity-analysis-deep.html">
+    <div class="num">第 2 课</div>
+    <div class="title">灵敏度分析深入</div>
+    <div class="en">Sensitivity Analysis Deep Dive</div>
+    <div class="topics">参数敏感性 · 鲁棒性分析 · 模型验证</div>
+  </a>
+
+  <a class="lesson-card" href="lessons/0003-computational-methods.html">
+    <div class="num">第 3 课</div>
+    <div class="title">优化计算方法</div>
+    <div class="en">Computational Optimization Methods</div>
+    <div class="topics">Newton 法 · 二分法 · 黄金分割搜索 · 多变量梯度</div>
+  </a>
+
+  <a class="lesson-card" href="lessons/0004-multivariable-optimization.html">
+    <div class="num">第 4 课</div>
+    <div class="title">多变量无约束优化</div>
+    <div class="en">Multivariable Unconstrained Optimization</div>
+    <div class="topics">偏导数 · 极值条件 · Hessian 矩阵 · 驻点分类</div>
+  </a>
+
+  <a class="lesson-card" href="lessons/0005-lagrange-multipliers.html">
+    <div class="num">第 5 课</div>
+    <div class="title">Lagrange 乘数法</div>
+    <div class="en">Lagrange Multipliers</div>
+    <div class="topics">等式约束优化 · Lagrange 函数 · KKT 条件基础</div>
+  </a>
+
+  <a class="lesson-card" href="lessons/0006-gradient-convex-fppa.html">
+    <div class="num">第 6 课</div>
+    <div class="title">梯度、凸优化与 FPPA</div>
+    <div class="en">Gradient, Convex Optimization &amp; FPPA</div>
+    <div class="topics">方向导数 · 梯度下降 · 凸集/凸函数 · 不动点邻近算法</div>
+  </a>
+
+  <a class="lesson-card" href="lessons/0007-linear-regression.html">
+    <div class="num">第 7 课</div>
+    <div class="title">线性回归模型</div>
+    <div class="en">Linear Regression Models</div>
+    <div class="topics">简单线性回归 · 最小二乘法 · 模型评估 · 残差分析</div>
+  </a>
+
+  <a class="lesson-card" href="lessons/0008-multicollinearity.html">
+    <div class="num">第 8 课</div>
+    <div class="title">多重共线性</div>
+    <div class="en">Multicollinearity</div>
+    <div class="topics">VIF · 共线性诊断 · 变量选择 · 逐步回归</div>
+  </a>
+
+  <a class="lesson-card" href="lessons/0009-applications.html">
+    <div class="num">第 9 课</div>
+    <div class="title">建模应用案例</div>
+    <div class="en">Applications &amp; Case Studies</div>
+    <div class="topics">图像去噪 · 综合建模案例 · 考试技巧</div>
+  </a>
+</div>
+
+<div class="links">
+  <a href="MISSION.md">学习目标</a>
+  <a href="NOTES.md">考试笔记</a>
+  <a href="RESOURCES.md">资源清单</a>
+</div>
+
+<div class="ask-agent">
+  <strong>有问题？</strong><br>
+  在 Claude Code 中打开任意课程，直接向 AI 助教提问，例如：<em>"Lagrange 乘数法的几何意义是什么？"</em> 或 <em>"帮我推一遍 Newton 法的迭代公式"</em>
+</div>
+
+</body>
+</html>

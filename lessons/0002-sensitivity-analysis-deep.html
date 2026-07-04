@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 0002: 灵敏度分析专题 / Sensitivity Analysis Practice</title>
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+
+<h1>0002 · 灵敏度分析专题练习<br><small style="font-size:1.1rem;color:var(--muted);">Sensitivity Analysis — Worked Examples & Practice</small></h1>
+<div class="lesson-meta">
+  基于 Lecture 1 §2 (Lin, JNU) &amp; Meerschaert §1.2 · 预计阅读 25 分钟
+</div>
+
+<h2>1. 复习 / Review: What Problem Does Sensitivity Analysis Solve?</h2>
+
+<div class="concept-box">
+  <strong>Sensitivity analysis addresses one core question:</strong><br>
+  If our assumptions are slightly wrong, how much does our conclusion change?<br>
+  <em>如果假设偏差一点，结论会变多少？</em><br><br>
+  <strong>本质 / Essence：</strong>把最优解 x* 看作参数 p 的<strong>函数</strong>（treat the optimal solution as a function of the parameter），
+  然后用导数算出「参数变一点点，最优解变多少」。
+</div>
+
+<h2>2. 灵敏度系数的严格定义 / Formal Definition of Sensitivity</h2>
+
+<h3>2.1 From absolute change to relative change / 从绝对变化到相对变化</h3>
+
+<div class="formula-block">
+<strong>Absolute change / 绝对变化：</strong>parameter p changes by <strong>Δp</strong> → optimal x changes by <strong>Δx</strong><br><br>
+<strong>Relative change / 相对变化：</strong>p changes by <strong>Δp/p</strong>, x changes by <strong>Δx/x</strong><br><br>
+<strong>Ratio / 比值：</strong>(Δx/x) / (Δp/p)<br>
+这个比值告诉你：<strong>p 每变化 1%，x 变化百分之几？</strong>
+</div>
+
+<h3>2.2 Take the limit to get the exact formula / 取极限得到精确公式</h3>
+
+<div class="formula-block">
+Let Δp → 0:<br>
+<strong>S(x, p) = (dx/dp) × (p/x)</strong><br><br>
+• <strong>dx/dp</strong> — ordinary derivative (x's absolute rate of change with respect to p)<br>
+• <strong>Multiply by p/x</strong> — converts absolute rate to <strong>percentage rate</strong> (dimensionless!)<br><br>
+
+Why multiply by p/x? / 为什么乘 p/x？<br>
+Suppose your salary goes from 10,000 → 11,000 (+1,000 = +10%).<br>
+Your friend's goes from 100,000 → 101,000 (+1,000 = +1%).<br>
+Same absolute change, completely different relative significance.<br>
+<em>同样的绝对变化，完全不同的相对意义。p/x 消除了量纲的影响。</em>
+</div>
+
+<h2>3. 灵敏度分析的完整四步 / The Complete Four-Step Procedure</h2>
+
+<div class="formula-block">
+<strong>Step A:</strong> Treat the parameter as unknown (replace number with letter), re-derive x(p).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<em>将参数当作未知字母，重新推导 x(p)。</em><br><br>
+<strong>Step B:</strong> Differentiate to get dx/dp. / 对 x(p) 求导。<br><br>
+<strong>Step C:</strong> Evaluate S = (dx/dp) × (p/x) at the original parameter value.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<em>在原始参数值处计算 S。</em><br><br>
+<strong>Step D:</strong> Interpret sign and magnitude.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<em>解释符号和大小。</em><br>
+&nbsp;&nbsp;• S > 0: p↑ → x↑ (same direction / 同向)<br>
+&nbsp;&nbsp;• S < 0: p↑ → x↓ (opposite direction / 反向)<br>
+&nbsp;&nbsp;• |S| < 0.5: robust / 稳健 &nbsp;| • |S| > 2: sensitive / 敏感
+</div>
+
+<h2>4. 完整示例 / Worked Example: Sensitivity to r (Price Falling Rate)</h2>
+
+<div class="formula-block">
+<strong>Step A / 推导 x(r)：</strong><br>
+p = 0.65 − rt, other assumptions unchanged.<br>
+f(t) = (0.65 − rt)(200 + 5t) − 0.45t<br>
+&nbsp;&nbsp;&nbsp;&nbsp;= −5rt² + (2.8 − 200r)t + 130<br>
+f′(t) = −10rt + (2.8 − 200r) = 0<br>
+→ <strong>x(r) = (2.8 − 200r) / (10r) = 0.28/r − 20</strong><br><br>
+
+Domain check / 定义域：x(r) ≥ 0 ⟺ r ≤ 0.014<br><br>
+
+<strong>Step B / 求导：</strong><br>
+dx/dr = −0.28/r² = −7/(25r²)<br><br>
+
+<strong>Step C / 计算 S：</strong><br>
+At r = 0.01, x = 8:<br>
+dx/dr = −7/(25 × 0.0001) = −2800<br>
+S(x, r) = (−2800) × (0.01/8) = (−2800) × 0.00125 = <strong>−3.5</strong>
+</div>
+
+<h2>5. 第二个示例 / Worked Example: Sensitivity to g (Growth Rate)</h2>
+
+<div class="formula-block">
+<strong>Modify: w = 200 + gt</strong> (originally g = 5 lbs/day)<br>
+f(t) = −0.01gt² + (0.65g − 2.45)t + 130<br>
+f′(t) = −0.02gt + 0.65g − 2.45 = 0<br>
+→ <strong>x(g) = 32.5 − 122.5/g</strong> &nbsp; (verify: g=5 → x=8 ✓)<br><br>
+dx/dg = 122.5/g², at g=5: dx/dg = 4.9<br>
+<strong>S(x, g) = 4.9 × (5/8) = 3.0625</strong>
+</div>
+
+<h2>6. Two Levels of Sensitivity / 两个层次的灵敏度</h2>
+
+<div class="concept-box">
+  <strong>Decision sensitivity / 决策灵敏度 S(x, p)：</strong>参数变了，我该<strong>怎么做</strong>需要调整多少？<br>
+  <strong>Objective sensitivity / 目标灵敏度 S(y, p)：</strong>参数变了，我能赚的<strong>目标值</strong>变多少？<br><br>
+  They can be completely different! / 两者可能截然不同！<br>
+  S(x, g) ≈ 3.06 (high) vs S(y, g) ≈ 0.17 (low).<br>
+  <em>增重速率判断错了 → 卖的时间偏差较大 → 但实际利润差不了多少！</em><br><br>
+  <strong>Target sensitivity derivation / 目标灵敏度推导：</strong><br>
+  y(g) = 150.0625/g + 10.5625g + 50.375<br>
+  dy/dg = 4.56 at g=5 → <strong>S(y, g) = 4.56 × (5/133.2) = 0.171</strong>
+</div>
+
+<div class="quiz-block">
+  <div class="quiz-header">Retrieval Practice / 检索练习</div>
+  <div class="quiz-body">
+    <div class="quiz-q" id="q1">
+      <p><strong>Q1.</strong> Why do we use S = (dx/dp)×(p/x) instead of just dx/dp?</p>
+      <ul class="quiz-options">
+        <li><button onclick="check(this, 'A', 'q1-fb')">A. To simplify the calculation / 简化计算</button></li>
+        <li><button onclick="check(this, 'B', 'q1-fb')">B. dx/dp has units and cannot compare across parameters. Multiplying by p/x creates a dimensionless ratio (percentage/percentage) for fair comparison / dx/dp 带单位无法跨参数比较。乘 p/x 变成无量纲百分比比值</button></li>
+        <li><button onclick="check(this, 'C', 'q1-fb')">C. Because the textbook says so / 教材这么写的</button></li>
+        <li><button onclick="check(this, 'D', 'q1-fb')">D. To make the result look better / 让结果更好看</button></li>
+      </ul>
+      <div class="quiz-feedback" id="q1-fb"></div>
+    </div>
+    <div class="quiz-q" id="q2">
+      <p><strong>Q2.</strong> What does |S| = 0.2 tell you vs |S| = 3.5?</p>
+      <ul class="quiz-options">
+        <li><button onclick="check(this, 'A', 'q2-fb')">A. Both are equally sensitive / 一样敏感</button></li>
+        <li><button onclick="check(this, 'B', 'q2-fb')">B. |S|=0.2 < 0.5 → robust (the model tolerates parameter errors well). |S|=3.5 > 2 → highly sensitive (parameter must be estimated precisely) / |S|=0.2 稳健，参数误差影响不大；|S|=3.5 高度敏感，参数必须精确估计</button></li>
+        <li><button onclick="check(this, 'C', 'q2-fb')">C. |S|=0.2 means the model is unreliable / 模型不可靠</button></li>
+        <li><button onclick="check(this, 'D', 'q2-fb')">D. They're just numbers without meaning / 没有意义的数字</button></li>
+      </ul>
+      <div class="quiz-feedback" id="q2-fb"></div>
+    </div>
+    <div class="quiz-q" id="q3">
+      <p><strong>Q3.</strong> S(x, g) = 3.06 but S(y, g) = 0.17. What insight does this provide?</p>
+      <ul class="quiz-options">
+        <li><button onclick="check(this, 'A', 'q3-fb')">A. The calculation must be wrong / 肯定算错了</button></li>
+        <li><button onclick="check(this, 'B', 'q3-fb')">B. The optimal decision (when to sell) is sensitive to g, but the optimal profit is not — even if you mis-time the sale, your profit won't drop much. This is valuable: the model is forgiving in terms of outcome / 决策时间对 g 敏感，但最终利润不敏感——即使你时间选得不太好，利润损失也不大。模型在结果上是宽容的</button></li>
+        <li><button onclick="check(this, 'C', 'q3-fb')">C. Sensitivity analysis is useless / 灵敏度分析没用</button></li>
+        <li><button onclick="check(this, 'D', 'q3-fb')">D. The growth rate doesn't matter / 增重速率不重要</button></li>
+      </ul>
+      <div class="quiz-feedback" id="q3-fb"></div>
+    </div>
+  </div>
+</div>
+
+<div class="summary">
+  <h4>Key Takeaways / 本课要点</h4>
+  <ul>
+    <li><strong>S(x, p) = (dx/dp)·(p/x)</strong>: dimensionless ratio of relative changes</li>
+    <li>Complete 4-step procedure: derive x(p) → differentiate → compute S → interpret</li>
+    <li><strong>Decision sensitivity S(x,p)</strong> ≠ <strong>Objective sensitivity S(y,p)</strong> — analyze both</li>
+    <li>|S| > 2 → parameter must be precise; |S| < 0.5 → rough estimate OK</li>
+    <li>Always check the domain of validity of x(p) / 检查 x(p) 的有效定义域</li>
+  </ul>
+</div>
+
+<div class="ask-agent">
+  💬 Try asking me: "Give me two sensitivity analysis practice problems and grade my work."
+</div>
+
+<div class="nav">
+  <a href="0001-five-step-method.html">← Prev: 0001 · Five-Step Method</a>
+  <a href="0003-computational-methods.html">Next: 0003 · Computational Methods →</a>
+</div>
+
+<script>
+function check(btn, answer, fbId) {
+  const fb = document.getElementById(fbId);
+  const buttons = btn.parentElement.parentElement.querySelectorAll('button');
+  buttons.forEach(b => { b.disabled = true; b.classList.remove('correct', 'wrong'); });
+  const correctAnswers = { 'q1-fb': 'B', 'q2-fb': 'B', 'q3-fb': 'B' };
+  const explanations = {
+    'q1-fb': { A:'✗', B:'✓ Correct. dx/dp carries units (e.g., days per $/day). Multiplying by p/x removes units for fair comparison across parameters with different units.', C:'✗', D:'✗' },
+    'q2-fb': { A:'✗', B:'✓ Correct. Small |S| = robust conclusion; large |S| = fragile conclusion requiring precise parameter estimates.', C:'✗ On the contrary — small |S| means reliability.', D:'✗ They have clear, actionable meaning.' },
+    'q3-fb': { A:'✗ The calculations are correct.', B:'✓ Correct. This is a key insight of sensitivity analysis — sensitivity of decision and sensitivity of outcome are separate questions.', C:'✗ This result shows exactly why sensitivity analysis is useful.', D:'✗ It matters for the decision, just not much for the final outcome.' }
+  };
+  const correct = correctAnswers[fbId];
+  const expl = explanations[fbId];
+  buttons.forEach(b => { if (b.textContent.trim().charAt(0) === correct) b.classList.add('correct'); });
+  if (answer === correct) { btn.classList.add('correct'); fb.innerHTML = '✓ ' + expl[answer]; }
+  else { btn.classList.add('wrong'); fb.innerHTML = '✗ ' + (expl[answer] || '') + '<br><br><strong>✓ Correct:</strong> ' + expl[correct]; }
+}
+</script>
+
+</body>
+</html>

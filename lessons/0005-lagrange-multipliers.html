@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 0005: Lagrange 乘数法 / Lagrange Multipliers</title>
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+
+<h1>0005 · Lagrange 乘数法（有约束优化）<br><small style="font-size:1.1rem;color:var(--muted);">Lagrange Multipliers — Constrained Optimization</small></h1>
+<div class="lesson-meta">
+  基于 Lecture 2/4 §2.3 (Lin, JNU) &amp; Meerschaert §2.3 · 预计阅读 25 分钟
+</div>
+
+<h2>1. Why constraints? / 为什么需要约束优化？</h2>
+
+<p>TV problem solution: x₁=4735, x₂=7043, total=11778. But the assembly plant has a <strong>capacity constraint</strong> of <strong>10,000 total sets</strong>. Our unconstrained solution violates this! / 无约束解违反了总产能限制（x₁+x₂ ≤ 10000）。</p>
+
+<div class="concept-box">
+  <strong>Constrained optimization problem / 有约束优化问题：</strong><br>
+  Maximize f(x₁, x₂), subject to <strong>g(x₁, x₂) = c</strong> (equality constraint)<br>
+  最大化目标函数，但在<strong>约束条件限制的区域内</strong>。
+</div>
+
+<h2>2. Geometric intuition / 几何直觉</h2>
+
+<div class="concept-box">
+  The constraint g(x₁,x₂)=c defines a <strong>curve</strong> (the feasible set / 可行域).<br>
+  We can only move along this curve. Where is f maximized?<br><br>
+  <strong>Key insight / 关键洞察：</strong>At the optimal point, <strong>∇f must be perpendicular to the constraint curve</strong>.<br>
+  Why? If ∇f had a component tangent to the curve, moving along that direction would increase f.<br><br>
+  Since ∇g is also perpendicular to the constraint curve (gradient ⟂ level set),<br>
+  ∇f and ∇g must be <strong>parallel</strong>:<br>
+  <strong>∇f = λ·∇g</strong><br><br>
+  This λ is the <strong>Lagrange multiplier / Lagrange 乘数</strong>.
+</div>
+
+<h2>3. The Lagrange function method / Lagrange 函数方法</h2>
+
+<div class="formula-block">
+<strong>Original problem / 原问题：</strong>maximize f(x₁, x₂), subject to g(x₁, x₂) = c<br><br>
+<strong>Lagrange function / Lagrange 函数：</strong><br>
+<strong>L(x₁, x₂, λ) = f(x₁, x₂) − λ·[g(x₁, x₂) − c]</strong><br><br>
+<strong>Solve / 求解（n+k 个方程，n+k 个未知数）：</strong><br>
+∂L/∂x₁ = 0 → ∂f/∂x₁ − λ·∂g/∂x₁ = 0<br>
+∂L/∂x₂ = 0 → ∂f/∂x₂ − λ·∂g/∂x₂ = 0<br>
+∂L/∂λ = 0 &nbsp;→ g(x₁, x₂) − c = 0 &nbsp;(this is just the constraint / 就是原约束!)<br><br>
+This is exactly ∇f = λ∇g together with g = c.
+</div>
+
+<div class="concept-box">
+  <strong>λ's economic meaning / λ 的经济含义 — "shadow price / 影子价格"：</strong><br>
+  λ = <strong>df*/dc</strong> — how much the optimal objective value changes when the constraint is relaxed by one unit.<br>
+  λ tells you "how much more profit would I make if I had one more unit of capacity?"<br><br>
+  <strong>Multiple constraints: k constraints → k multipliers λ₁,…,λₖ.</strong><br>
+  Prerequisite: ∇g₁,…,∇gₖ must be <strong>linearly independent</strong> / 必须线性无关。
+</div>
+
+<h2>4. Handling inequality constraints / 处理不等式约束</h2>
+
+<div class="concept-box">
+  <strong>Practical approach / 实用方法：</strong><br>
+  <strong>1.</strong> Solve <strong>unconstrained</strong> version first / 先解无约束版本<br>
+  <strong>2.</strong> Check if solution satisfies all inequality constraints / 检查是否满足不等式<br>
+  <strong>3.</strong> If yes → done! / 满足就结束了<br>
+  <strong>4.</strong> If some constraints are violated → set those to <strong>equality</strong> (they "bind") and use Lagrange / 被违反的约束取等号，用 Lagrange 法<br>
+  <strong>5.</strong> Compare all feasible candidates and select the best<br><br>
+  Why equality? If a constraint is "slack" (not binding), it doesn't affect the optimum.<br>
+  The optimum occurs where binding constraints are <strong>tight</strong>.
+</div>
+
+<div class="quiz-block">
+  <div class="quiz-header">Retrieval Practice / 检索练习</div>
+  <div class="quiz-body">
+    <div class="quiz-q" id="q1">
+      <p><strong>Q1.</strong> What does the Lagrange multiplier λ represent?</p>
+      <ul class="quiz-options">
+        <li><button onclick="check(this, 'A', 'q1-fb')">A. The magnitude of the gradient / 梯度的大小</button></li>
+        <li><button onclick="check(this, 'B', 'q1-fb')">B. λ = df*/dc — the rate of change of the optimal objective value with respect to the constraint constant. Also, ∇f = λ·∇g at the optimum / λ=df*/dc，最优目标值对约束常数的导数。同时也是 ∇f 与 ∇g 的比例系数</button></li>
+        <li><button onclick="check(this, 'C', 'q1-fb')">C. The number of constraints / 约束的数量</button></li>
+        <li><button onclick="check(this, 'D', 'q1-fb')">D. A meaningless auxiliary variable / 没有意义的辅助变量</button></li>
+      </ul>
+      <div class="quiz-feedback" id="q1-fb"></div>
+    </div>
+    <div class="quiz-q" id="q2">
+      <p><strong>Q2.</strong> Why must we check that ∇g₁,…,∇gₖ are linearly independent?</p>
+      <ul class="quiz-options">
+        <li><button onclick="check(this, 'A', 'q2-fb')">A. It's a prerequisite of the Lagrange multiplier theorem; if they're dependent, the extremum may not satisfy ∇f = Σλᵢ∇gᵢ — check such exceptional points separately / 这是定理的前提条件，线性相关时极值点可能不在 Lagrange 方程解中</button></li>
+        <li><button onclick="check(this, 'B', 'q2-fb')">B. Just a theoretical detail to ignore / 可以忽略的理论细节</button></li>
+        <li><button onclick="check(this, 'C', 'q2-fb')">C. Only matters for programming / 只与编程有关</button></li>
+        <li><button onclick="check(this, 'D', 'q2-fb')">D. To simplify the calculation / 为了简化计算</button></li>
+      </ul>
+      <div class="quiz-feedback" id="q2-fb"></div>
+    </div>
+  </div>
+</div>
+
+<div class="nav">
+  <a href="0004-multivariable-optimization.html">← Prev: 0004 · Multivariable</a>
+  <a href="0006-gradient-convex-fppa.html">Next: 0006 · Gradient & Convexity →</a>
+</div>
+
+<script>
+function check(btn, answer, fbId) {
+  const fb = document.getElementById(fbId);
+  const buttons = btn.parentElement.parentElement.querySelectorAll('button');
+  buttons.forEach(b => { b.disabled = true; b.classList.remove('correct', 'wrong'); });
+  const correctAnswers = { 'q1-fb': 'B', 'q2-fb': 'A' };
+  const explanations = {
+    'q1-fb': { A:'✗', B:'✓ Correct. λ has both geometric meaning (∇f=λ∇g) and economic meaning (shadow price).', C:'✗ Each constraint has its own λ.', D:'✗ λ has clear and important meaning.' },
+    'q2-fb': { A:'✓ Correct. Linear independence is the hypothesis of the theorem. Exceptional points (where gradients are dependent) must be checked separately.', B:'✗ It is not ignorable — missing it may lose extremum points.', C:'✗ This is a mathematical condition.', D:'✗ It actually adds computational burden.' }
+  };
+  const correct = correctAnswers[fbId];
+  const expl = explanations[fbId];
+  buttons.forEach(b => { if (b.textContent.trim().charAt(0) === correct) b.classList.add('correct'); });
+  if (answer === correct) { btn.classList.add('correct'); fb.innerHTML = '✓ ' + expl[answer]; }
+  else { btn.classList.add('wrong'); fb.innerHTML = '✗ ' + (expl[answer] || '') + '<br><br><strong>✓ Correct:</strong> ' + expl[correct]; }
+}
+</script>
+
+</body>
+</html>

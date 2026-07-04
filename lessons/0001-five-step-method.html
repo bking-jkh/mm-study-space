@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 0001: 五步建模法 / Five-Step Method</title>
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+
+<h1>0001 · 五步建模法与单变量优化<br><small style="font-size:1.1rem;color:var(--muted);">Five-Step Method &amp; One-Variable Optimization</small></h1>
+<div class="lesson-meta">
+  基于 Lecture 1 (Lin, JNU) &amp; Meerschaert §1.1–1.2 ·
+  <a href="../reference/glossary.html">Glossary / 术语表</a> ·
+  预计阅读 30 分钟
+</div>
+
+<!-- ====== 第一部分 ====== -->
+<h2>1. 什么是数学建模？<br><small style="font-size:1rem;color:var(--muted);">What is Mathematical Modeling?</small></h2>
+
+<p>
+  数学建模就是把一个现实问题翻译成数学语言（translate a real-world problem into mathematical language），
+  用数学工具求解（solve it with mathematical tools），再把结果翻译回现实答案（translate the result back into plain language）。
+</p>
+
+<div class="concept-box">
+  <strong>Key Understanding / 关键理解：</strong>数学建模不是「套公式」。每一道现实问题都是独一无二的，
+  你首先要决定<strong>用什么数学结构</strong>来描述它（这是最难的一步），然后再求解。<br><br>
+  <strong>Mathematical modeling is the art of translating problems from an application area into tractable mathematical formulations.</strong> — Meerschaert, 4th Edition
+</div>
+
+<!-- ====== 第二部分 ====== -->
+<h2>2. 卖猪问题 / The Pig Problem</h2>
+
+<div class="concept-box">
+  <strong>Problem statement / 问题原文：</strong><br>
+  A pig weighing <strong>200 pounds</strong> gains <strong>5 pounds per day</strong> and costs <strong>45 cents a day</strong> to keep.
+  The market price for pigs is <strong>65 cents per pound</strong>, but is <strong>falling 1 cent per day</strong>.<br>
+  <strong>When should the pig be sold to maximize profit?</strong><br><br>
+  <em>一头猪现在重 200 磅，每天增重 5 磅，每天饲养成本 45 美分。
+  当前市场价是 65 美分/磅，但每天跌 1 美分。什么时候卖利润最大？</em>
+</div>
+
+<h3>热身：硬币问题 / Warm-up: The Coin Problem</h3>
+
+<div class="concept-box">
+  <strong>Problem / 问题：</strong>There are 11 coins, nickels (5 cents) and dimes (10 cents), totaling 70 cents.
+  How many of each?<br>
+  <em>有 11 枚硬币，全是 5 分（nickel）和 10 分（dime），总价值 70 分。各有几枚？</em>
+</div>
+
+<ol>
+  <li>你意识到需要两个变量：nickels 的数量（叫它 x）和 dimes 的数量（叫它 y）→ <strong>determine the variables / 确定变量</strong></li>
+  <li>两个条件：x + y = 11（total count）和 5x + 10y = 70（total value）→ <strong>write equations (assumptions) / 写出方程（假设）</strong></li>
+  <li>目标是「求出 x 和 y」→ <strong>state the objective / 明确目标</strong></li>
+  <li>解方程组：x = 8, y = 3 → <strong>solve the model / 求解</strong></li>
+  <li>回答：8 nickels and 3 dimes → <strong>answer the question in plain language / 回答问题</strong></li>
+</ol>
+
+<p>这 5 个步骤，就是<strong>五步建模法（Five-Step Method）</strong>的雏形。</p>
+
+<!-- ====== 第三部分：五步法详解 ====== -->
+<h2>3. 五步法详解：卖猪问题<br><small style="font-size:1rem;color:var(--muted);">The Five-Step Method Applied to the Pig Problem</small></h2>
+
+<p>The five steps are / 五步依次为：</p>
+<ol class="step-list">
+  <li><strong>Ask the question</strong> / 提出问题</li>
+  <li><strong>Select the modeling approach</strong> / 选择建模方法</li>
+  <li><strong>Formulate the model</strong> / 列出模型</li>
+  <li><strong>Solve the model</strong> / 求解模型</li>
+  <li><strong>Answer the question</strong> / 回答问题</li>
+</ol>
+
+<hr style="margin: 1.5rem 0; border: none; border-top: 1px solid var(--border);">
+
+<h3>Step 1: Ask the Question / 提出问题</h3>
+
+<p>Step 1 有三个子任务（three sub-tasks）：列出<strong>变量（variables）</strong>、写出<strong>假设（assumptions）</strong>、明确<strong>目标（objective）</strong>。</p>
+
+<h4>① Variables / 变量</h4>
+
+<table style="width:100%; border-collapse:collapse; margin:1rem 0;">
+  <tr style="border-bottom:2px solid var(--accent);">
+    <th style="text-align:left; padding:0.4rem;">Symbol / 符号</th>
+    <th style="text-align:left; padding:0.4rem;">Meaning / 含义</th>
+    <th style="text-align:left; padding:0.4rem;">Units / 单位</th>
+    <th style="text-align:left; padding:0.4rem;">Why? / 为什么需要它？</th>
+  </tr>
+  <tr style="border-bottom:1px solid #eee;">
+    <td style="padding:0.4rem;"><strong>t</strong></td>
+    <td style="padding:0.4rem;">time / 时间</td>
+    <td style="padding:0.4rem;">days</td>
+    <td style="padding:0.4rem;">核心决策变量（when to sell）</td>
+  </tr>
+  <tr style="border-bottom:1px solid #eee;">
+    <td style="padding:0.4rem;"><strong>w</strong></td>
+    <td style="padding:0.4rem;">weight of pig / 猪的体重</td>
+    <td style="padding:0.4rem;">lbs</td>
+    <td style="padding:0.4rem;">体重随时间变化，影响收入</td>
+  </tr>
+  <tr style="border-bottom:1px solid #eee;">
+    <td style="padding:0.4rem;"><strong>p</strong></td>
+    <td style="padding:0.4rem;">price per pound / 单价</td>
+    <td style="padding:0.4rem;">$/lb</td>
+    <td style="padding:0.4rem;">价格随时间变化</td>
+  </tr>
+  <tr style="border-bottom:1px solid #eee;">
+    <td style="padding:0.4rem;"><strong>C</strong></td>
+    <td style="padding:0.4rem;">cost of keeping pig / 饲养总成本</td>
+    <td style="padding:0.4rem;">$</td>
+    <td style="padding:0.4rem;">成本是利润的减项</td>
+  </tr>
+  <tr style="border-bottom:1px solid #eee;">
+    <td style="padding:0.4rem;"><strong>R</strong></td>
+    <td style="padding:0.4rem;">revenue from sale / 卖出收入</td>
+    <td style="padding:0.4rem;">$</td>
+    <td style="padding:0.4rem;">Revenue = price × weight</td>
+  </tr>
+  <tr>
+    <td style="padding:0.4rem;"><strong>P</strong></td>
+    <td style="padding:0.4rem;">profit / 利润</td>
+    <td style="padding:0.4rem;">$</td>
+    <td style="padding:0.4rem;">Profit = Revenue − Cost（我们要最大化的量）</td>
+  </tr>
+</table>
+
+<div class="concept-box">
+  <strong>常见错误 / Common Pitfall：</strong>混淆变量（variables，会变化的量）和<strong>常量/参数（constants/parameters</strong>，在当前设定中不变的值，如初始体重 200 lbs，增重速率 5 lbs/day）。<br><br>
+  <strong>技巧：</strong>给每个变量标注单位（label units）。如果后续计算中单位对不上，假设就有误。
+</div>
+
+<h4>② Assumptions / 假设</h4>
+
+<div class="formula-block">
+<strong>Assumption 1 / 假设 1：猪的体重线性增长（linear weight gain）</strong><br>
+<strong>w = 200 + 5t</strong><br>
+<i>Initial weight is 200 lbs, gains 5 lbs per day.</i><br><br>
+
+<strong>Assumption 2 / 假设 2：猪价线性下降（linear price decline）</strong><br>
+<strong>p = 0.65 − 0.01t</strong><br>
+<i>Current price is $0.65/lb, falls by $0.01 per day.</i><br>
+用「−」号表示下降（negative sign = decline）。<br><br>
+
+<strong>Assumption 3 / 假设 3：饲养成本每天固定（constant daily cost）</strong><br>
+<strong>C = 0.45t</strong><br>
+<i>Cost is 45¢ = $0.45 per day × t days.</i><br><br>
+
+<strong>Assumption 4 / 假设 4：收入 = 单价 × 重量</strong><br>
+<strong>R = p × w</strong> &nbsp;&nbsp;<i>(Revenue = price × weight)</i><br><br>
+
+<strong>Assumption 5 / 假设 5：利润 = 收入 − 成本</strong><br>
+<strong>P = R − C</strong> &nbsp;&nbsp;<i>(Profit = Revenue − Cost)</i><br><br>
+
+<strong>Assumption 6 / 假设 6：时间不能为负（physical constraint）</strong><br>
+<strong>t ≥ 0</strong> &nbsp;&nbsp;<i>(You cannot sell the pig in the past)</i>
+</div>
+
+<div class="concept-box">
+  <strong>Why write out all assumptions? / 为什么要把假设写清楚？</strong><br>
+  因为假设很可能不准确（assumptions may be inaccurate）。猪真的每天增重 5 磅吗？价格真的每天跌 1 美分吗？
+  如果不明确写出假设，后面就没法做<strong>灵敏度分析（sensitivity analysis）</strong>——判断你的结论有多可靠。
+</div>
+
+<h4>③ Objective / 目标</h4>
+
+<div class="formula-block">
+<strong>Objective: Maximize P (profit)</strong> / 最大化利润 P<br>
+用数学符号：<strong>max P(t)</strong>, subject to t ≥ 0<br><br>
+目标必须写清楚是「最大化（maximize）」还是「最小化（minimize）」<strong>什么量</strong>。
+</div>
+
+<hr style="margin: 1.5rem 0; border: none; border-top: 1px solid var(--border);">
+
+<h3>Step 2: Select the Modeling Approach / 选择建模方法</h3>
+
+<p>观察 Step 1 的成果：只有一个独立变量 t，目标函数 P(t) 只依赖 t，约束只有 t ≥ 0。</p>
+<p>这符合<strong>单变量无约束优化（one-variable unconstrained optimization）</strong>的标准形式。</p>
+
+<div class="concept-box">
+  <strong>What is one-variable optimization? / 什么是单变量优化？</strong><br>
+  给你一个函数 y = f(x)，定义在集合 S 上（如 x ≥ 0），找 x 取什么值时 f(x) 最大（或最小）。<br><br>
+  <strong>核心定理 / Key Theorem：</strong><br>
+  If f attains its <strong>maximum or minimum</strong> at an <strong>interior point</strong> x ∈ S, and f is differentiable at x, then <strong>f′(x) = 0</strong>.<br>
+  <em>如果 f 在 S 的内部某点 x 处可微且取得最大值/最小值，那么在那一点，导数为零。</em><br><br>
+  <strong>直觉理解 / Intuition：</strong>想象一座光滑的山。山顶（maximum）和山谷底（minimum）都是平的，斜率（slope）= 0。导数 f′(x) 就是斜率。<br><br>
+  <strong>⚠️ 注意：</strong>f′(x) = 0 只是<strong>必要条件（necessary condition）</strong>，不是充分条件（not sufficient）。f′(x)=0 的点可能是：
+  <ul>
+    <li>极大值点 / local maximum（山顶）</li>
+    <li>极小值点 / local minimum（山谷底）</li>
+    <li>拐点 / inflection point（先上后继续上，短暂停顿）</li>
+  </ul>
+  另外，极值也可能出现在定义域的<strong>边界（boundary）</strong>处（如 t=0），边界点不需要 f′(x)=0。
+</div>
+
+<hr style="margin: 1.5rem 0; border: none; border-top: 1px solid var(--border);">
+
+<h3>Step 3: Formulate the Model / 列出模型</h3>
+
+<p>把 Step 1 的具体问题<strong>代入（substitute）</strong>Step 2 的标准形式，消去中间变量。</p>
+
+<div class="formula-block">
+<strong>Step 1: Write P in terms of intermediate variables</strong><br>
+P = R − C<br><br>
+
+<strong>Step 2: Substitute R = p × w and C = 0.45t</strong><br>
+P = p × w − 0.45t<br><br>
+
+<strong>Step 3: Substitute p = 0.65 − 0.01t and w = 200 + 5t</strong><br>
+P = (0.65 − 0.01t) × (200 + 5t) − 0.45t<br><br>
+
+<strong>Step 4: Expand (分配律展开)</strong><br>
+(0.65 − 0.01t)(200 + 5t)<br>
+= 0.65×200 + 0.65×5t − 0.01t×200 − 0.01t×5t<br>
+= 130 + 3.25t − 2t − 0.05t²<br>
+= 130 + 1.25t − 0.05t²<br><br>
+
+Subtract 0.45t / 减去 0.45t：<br>
+P = 130 + 1.25t − 0.05t² − 0.45t<br>
+= 130 + 0.8t − 0.05t²<br><br>
+
+<strong>Standard form / 标准形式（降幂排列 / descending powers）：</strong><br>
+<strong>P(t) = −0.05t² + 0.8t + 130</strong><br><br>
+
+<strong>Final model / 最终模型：</strong><br>
+Maximize <strong>f(x) = −0.05x² + 0.8x + 130</strong>, subject to x ≥ 0<br>
+（这里 t → x，P → f，是数学惯例 / notation convention）
+</div>
+
+<div class="concept-box">
+  <strong>Sanity check / 验证你的模型是否合理：</strong><br>
+  • t = 0（sell immediately / 立即卖）：P = 130 → 利润 $130<br>
+  • t = 8（我们怀疑是最优解）：P = −0.05×64 + 0.8×8 + 130 = 133.2<br>
+  • t = 20（wait too long / 等太久）：P = −0.05×400 + 0.8×20 + 130 = 126<br>
+  利润先增后减（profit goes up then down）→ 存在一个最优时间点 ✓
+</div>
+
+<hr style="margin: 1.5rem 0; border: none; border-top: 1px solid var(--border);">
+
+<h3>Step 4: Solve the Model / 求解模型</h3>
+
+<h4>① Take the derivative and set it to zero / 求导并令其为零</h4>
+
+<div class="formula-block">
+f(x) = −0.05x² + 0.8x + 130<br><br>
+<strong>f′(x) = −0.1x + 0.8</strong> &nbsp;&nbsp;<i>（x² → 2x, 所以 −0.05x² → −0.1x；0.8x → 0.8；130 → 0）</i><br><br>
+Set f′(x) = 0 / 令导数为零：<br>
+−0.1x + 0.8 = 0 → 0.1x = 0.8 → <strong>x = 8</strong>
+</div>
+
+<h4>② Verify it's a maximum, not a minimum / 验证这是极大值</h4>
+
+<div class="formula-block">
+<strong>Method 1 / 方法一：Second derivative test / 二阶导数检验</strong><br>
+<strong>f″(x) = −0.1 &lt; 0</strong> for all x<br>
+Second derivative negative → f is <strong>concave down</strong>（开口向下的抛物线）→ x=8 is the <strong>global maximum</strong> / 全局最大值。<br><br>
+
+<strong>Method 2 / 方法二：First derivative sign analysis / 一阶导数符号分析</strong><br>
+When x &lt; 8: f′(x) = −0.1x + 0.8 &gt; 0 → f is <strong>increasing</strong> / 递增<br>
+When x &gt; 8: f′(x) = −0.1x + 0.8 &lt; 0 → f is <strong>decreasing</strong> / 递减<br>
+So x = 8 is the peak / 所以 x=8 是峰值。
+</div>
+
+<h4>③ Compute the maximum profit / 计算最大利润</h4>
+
+<div class="formula-block">
+f(8) = −0.05 × 64 + 0.8 × 8 + 130<br>
+&nbsp;&nbsp;&nbsp;&nbsp;= −3.2 + 6.4 + 130<br>
+&nbsp;&nbsp;&nbsp;&nbsp;= <strong>133.2</strong><br><br>
+Maximum profit = <strong>$133.20</strong>, achieved at <strong>day 8</strong>.
+</div>
+
+<hr style="margin: 1.5rem 0; border: none; border-top: 1px solid var(--border);">
+
+<h3>Step 5: Answer the Question / 回答问题</h3>
+
+<div class="concept-box">
+  <strong>The golden rule of Step 5 / Step 5 的黄金法则：</strong><br>
+  Rephrase the results in <strong>nontechnical terms</strong>. Avoid mathematical symbols and jargon.<br>
+  <em>用非技术语言重新表述结果，避免数学符号和术语。</em><br><br>
+  Anyone who can understand the original question should be able to understand your answer.<br>
+  <em>任何能理解原始问题的人都应该能理解你的答案。</em>
+</div>
+
+<div class="formula-block">
+  <strong>The pig should be sold after 8 days, yielding a net profit of approximately $133.20.</strong><br>
+  <em>第 8 天卖出这头猪能获得最大利润，约为 $133.20。</em><br><br>
+  This conclusion is valid only if our assumptions remain valid: the pig continues to gain 5 lbs/day,
+  the price continues to fall by 1¢/day, and the daily cost remains 45¢/day.<br>
+  <em>前提是假设成立：猪继续每天增重 5 磅，价格继续每天跌 1 美分，饲养成本保持每天 45 美分。</em>
+</div>
+
+<hr style="margin: 1.5rem 0; border: none; border-top: 2px solid var(--accent);">
+
+<!-- ====== 第四部分：灵敏度分析 ====== -->
+<h2>4. 灵敏度分析 / Sensitivity Analysis</h2>
+
+<h3>4.1 为什么要做灵敏度分析？/ Why Sensitivity Analysis?</h3>
+
+<p>建模始于假设（assumptions）。回头看看哪些假设是确定（certain）的，哪些是不确定（uncertain）的：</p>
+
+<ul>
+  <li>猪的当前体重 / current weight（200 lbs）→ <strong>很确定 / very certain</strong></li>
+  <li>当前猪价 / current price（65¢/lb）→ <strong>很确定 / very certain</strong></li>
+  <li>饲养成本 / cost per day（45¢/day）→ <strong>很确定 / very certain</strong></li>
+  <li>增重速率 / growth rate g（5 lbs/day）→ <strong>有点不确定 / somewhat uncertain</strong></li>
+  <li>猪价跌速 / price falling rate r（1¢/day）→ <strong>非常不确定 / very uncertain</strong></li>
+</ul>
+
+<p>灵敏度分析回答：<strong>If a parameter deviates from our assumption, how much does our conclusion change?</strong></p>
+
+<h3>4.2 方法一：逐点试探 / Brute-force Approach</h3>
+
+<p>对猪价跌速 r（price falling rate，原假设 r = 0.01 $/day）：</p>
+
+<table style="width:100%; border-collapse:collapse; margin:1rem 0;">
+  <tr style="border-bottom:2px solid var(--accent);">
+    <th style="text-align:left; padding:0.4rem;">r</th><th style="text-align:left; padding:0.4rem;">Change / 变化</th><th style="text-align:left; padding:0.4rem;">Optimal x / 最优 x</th><th style="text-align:left; padding:0.4rem;">Change in x / x 的变化</th>
+  </tr>
+  <tr style="border-bottom:1px solid #eee;"><td style="padding:0.4rem;">0.008</td><td style="padding:0.4rem;">−20%</td><td style="padding:0.4rem;">15.0 天</td><td style="padding:0.4rem;">+87.5%</td></tr>
+  <tr style="border-bottom:1px solid #eee;"><td style="padding:0.4rem;">0.009</td><td style="padding:0.4rem;">−10%</td><td style="padding:0.4rem;">11.1 天</td><td style="padding:0.4rem;">+38.8%</td></tr>
+  <tr style="border-bottom:1px solid #eee; background: var(--light-accent);"><td style="padding:0.4rem;"><strong>0.010</strong></td><td style="padding:0.4rem;"><strong>baseline / 基准</strong></td><td style="padding:0.4rem;"><strong>8.0 天</strong></td><td style="padding:0.4rem;"><strong>baseline / 基准</strong></td></tr>
+  <tr style="border-bottom:1px solid #eee;"><td style="padding:0.4rem;">0.011</td><td style="padding:0.4rem;">+10%</td><td style="padding:0.4rem;">5.5 天</td><td style="padding:0.4rem;">−31.3%</td></tr>
+  <tr><td style="padding:0.4rem;">0.012</td><td style="padding:0.4rem;">+20%</td><td style="padding:0.4rem;">3.3 天</td><td style="padding:0.4rem;">−58.8%</td></tr>
+</table>
+
+<p>r 只变化了 ±20%，但最优卖出时间从 3.3 天变到 15 天。<strong>模型对 r 非常敏感 / the model is very sensitive to r。</strong></p>
+
+<h3>4.3 方法二：公式推导 / Systematic Approach ⭐ 考试重点</h3>
+
+<p>核心思路：<strong>把参数当作未知字母，推导出最优解关于该参数的公式。</strong></p>
+
+<h4>对猪价跌速 r 做灵敏度 / Sensitivity to price falling rate r</h4>
+
+<div class="formula-block">
+<strong>Modify assumption / 修改假设：</strong>p = 0.65 − rt（把 0.01 换成 letter r）<br><br>
+
+<strong>Re-derive profit / 重新推导利润函数：</strong><br>
+f(t) = (0.65 − rt)(200 + 5t) − 0.45t<br>
+&nbsp;&nbsp;&nbsp;&nbsp;= 130 + 3.25t − 200rt − 5rt² − 0.45t<br>
+&nbsp;&nbsp;&nbsp;&nbsp;= <strong>−5rt² + (2.8 − 200r)t + 130</strong><br><br>
+
+<strong>Take derivative / 求导：</strong><br>
+f′(t) = −10rt + (2.8 − 200r) = 0<br>
+→ <strong>x(r) = (2.8 − 200r) / (10r) = 0.28/r − 20</strong><br><br>
+
+Verify / 验证：r = 0.01 → x = 0.28/0.01 − 20 = 28 − 20 = 8 ✓<br><br>
+
+<strong>⚠️ Domain check / 定义域检查：</strong><br>
+x(r) ≥ 0 ⟺ r ≤ 0.014<br>
+If r > 0.014, the optimal strategy is <strong>sell immediately (x=0)</strong> / 立即卖出，<br>
+because f′(t) &lt; 0 for all t ≥ 0（每一天利润都在降）。
+</div>
+
+<h4>计算灵敏度系数 / Computing the Sensitivity Coefficient</h4>
+
+<div class="formula-block">
+<strong>Definition / 定义：Sensitivity S(x, p) = (Δx/x) / (Δp/p)</strong><br>
+x 的相对变化（relative change）÷ p 的相对变化（relative change）<br><br>
+
+With calculus / 用微积分表示（let Δp → 0）：<br>
+<strong>S(x, p) = (dx/dp) × (p/x)</strong><br><br>
+
+<strong>Apply to our case / 应用于猪问题：</strong><br>
+x(r) = 7/(25r) − 20<br>
+dx/dr = −7/(25r²)<br>
+At r = 0.01: dx/dr = −7/(25 × 0.0001) = −2800<br><br>
+
+<strong>S(x, r) = (−2800) × (0.01/8) = (−2800) × 0.00125 = −3.5</strong>
+</div>
+
+<div class="concept-box">
+  <strong>How to interpret S(x, r) = −3.5? / 怎么解读？</strong><br>
+  • <strong>Sign / 符号：</strong>negative → r increases ⟹ x decreases（猪价跌越快，越早卖）<br>
+  • <strong>Magnitude / 大小：</strong>3.5 → a 1% increase in r causes ≈ 3.5% decrease in x<br>
+  • <strong>|S| = 3.5 > 2 → highly sensitive / 高度敏感</strong>，r must be estimated accurately<br><br>
+  <strong>Rule of thumb / 经验法则：</strong><br>
+  • |S| &lt; 0.5: insensitive / 不敏感（rough estimate OK）<br>
+  • 0.5 ≤ |S| ≤ 2: moderately sensitive / 中等敏感<br>
+  • |S| &gt; 2: highly sensitive / 高度敏感（need precise estimate）
+</div>
+
+<h4>对增重速率 g 做灵敏度 / Sensitivity to growth rate g</h4>
+
+<div class="formula-block">
+<strong>Modify: w = 200 + gt</strong>（原来 g = 5）<br><br>
+f(t) = (0.65 − 0.01t)(200 + gt) − 0.45t = −0.01gt² + (0.65g − 2.45)t + 130<br>
+f′(t) = −0.02gt + (0.65g − 2.45) = 0<br>
+→ <strong>x(g) = (0.65g − 2.45) / (0.02g) = 32.5 − 122.5/g</strong><br><br>
+dx/dg = 122.5/g², at g = 5: dx/dg = 122.5/25 = 4.9<br>
+<strong>S(x, g) = 4.9 × (5/8) = 3.0625</strong><br><br>
+Also sensitive / 也是高度敏感的：g 增 1%，最优时间增约 3%。
+</div>
+
+<h4>目标函数灵敏度 / Sensitivity of Optimal Profit S(y, g)</h4>
+
+<div class="formula-block">
+Substitute x(g) back into profit function / 把 x(g) 代回利润函数：<br>
+y(g) = 150.0625/g + 10.5625g + 50.375<br>
+dy/dg = −150.0625/g² + 10.5625<br>
+At g = 5: dy/dg = 4.56<br>
+<strong>S(y, g) = 4.56 × (5/133.2) = 0.171</strong><br><br>
+
+<strong>Key contrast / 关键对比：</strong><br>
+S(x, g) ≈ 3.06 → sensitive for <strong>when to sell</strong>（对决策时间敏感）<br>
+S(y, g) ≈ 0.17 → <strong>insensitive for profit</strong>（对最终利润不敏感）<br><br>
+This is good news: even if you misjudge the growth rate and sell at a suboptimal time,
+your profit won't be much lower! / 即使你判断错了增重速率、决策时间不完美，实际利润差不了多少！
+</div>
+
+<hr style="margin: 1.5rem 0; border: none; border-top: 2px solid var(--accent);">
+
+<h2>5. Summary / 总结</h2>
+
+<div class="summary">
+  <h4>Five-Step Method / 五步法清单</h4>
+  <table style="width:100%; border-collapse:collapse;">
+    <tr style="border-bottom:1px solid #ddd;">
+      <td style="padding:0.4rem; font-weight:700; color:var(--accent);">Step 1</td>
+      <td style="padding:0.4rem;"><strong>Ask the question</strong></td>
+      <td style="padding:0.4rem;">List variables (with units), state assumptions (equations/inequalities), state objective (maximize/minimize what)</td>
+    </tr>
+    <tr style="border-bottom:1px solid #ddd;">
+      <td style="padding:0.4rem; font-weight:700; color:var(--accent);">Step 2</td>
+      <td style="padding:0.4rem;"><strong>Select the approach</strong></td>
+      <td style="padding:0.4rem;">Identify problem type (one-variable optimization? multivariable? linear regression?)</td>
+    </tr>
+    <tr style="border-bottom:1px solid #ddd;">
+      <td style="padding:0.4rem; font-weight:700; color:var(--accent);">Step 3</td>
+      <td style="padding:0.4rem;"><strong>Formulate the model</strong></td>
+      <td style="padding:0.4rem;">Substitute Step 1 into Step 2's standard form → pure math problem</td>
+    </tr>
+    <tr style="border-bottom:1px solid #ddd;">
+      <td style="padding:0.4rem; font-weight:700; color:var(--accent);">Step 4</td>
+      <td style="padding:0.4rem;"><strong>Solve the model</strong></td>
+      <td style="padding:0.4rem;">Use calculus / Newton's method / graphical methods</td>
+    </tr>
+    <tr>
+      <td style="padding:0.4rem; font-weight:700; color:var(--accent);">Step 5</td>
+      <td style="padding:0.4rem;"><strong>Answer the question</strong></td>
+      <td style="padding:0.4rem;">Plain language, no math jargon, state the assumptions</td>
+    </tr>
+  </table>
+</div>
+
+<br>
+
+<div class="summary">
+  <h4>Sensitivity Analysis / 灵敏度分析要点</h4>
+  <ul>
+    <li><strong>S(x, p) = (dx/dp) × (p/x)</strong> — dimensionless ratio of relative changes</li>
+    <li>Sign: positive = same direction, negative = opposite direction</li>
+    <li>Magnitude: |S| > 2 → sensitive; |S| < 0.5 → robust</li>
+    <li>Prioritize uncertain parameters（优先分析不确定度高的参数）</li>
+    <li><strong>Decision sensitivity S(x,p)</strong> and <strong>objective sensitivity S(y,p)</strong> can differ greatly</li>
+  </ul>
+</div>
+
+<!-- ====== 测验 ====== -->
+<div class="quiz-block">
+  <div class="quiz-header">Retrieval Practice / 检索练习</div>
+  <div class="quiz-body">
+
+    <div class="quiz-q" id="q1">
+      <p><strong>Q1.</strong> The three sub-tasks of <strong>Step 1 (Ask the question)</strong> are:</p>
+      <ul class="quiz-options">
+        <li><button onclick="check(this, 'A', 'q1-fb')">A. Data, Model, Solution / 数据、模型、解</button></li>
+        <li><button onclick="check(this, 'B', 'q1-fb')">B. Variables (with units), Assumptions (equations/inequalities), Objective (maximize/minimize precisely stated)</button></li>
+        <li><button onclick="check(this, 'C', 'q1-fb')">C. Problem, Method, Answer / 问题、方法、答案</button></li>
+        <li><button onclick="check(this, 'D', 'q1-fb')">D. Input, Process, Output / 输入、处理、输出</button></li>
+      </ul>
+      <div class="quiz-feedback" id="q1-fb"></div>
+    </div>
+
+    <div class="quiz-q" id="q2">
+      <p><strong>Q2.</strong> Is f′(x) = 0 sufficient to guarantee a maximum? / f′(x)=0 一定保证极大值吗？</p>
+      <ul class="quiz-options">
+        <li><button onclick="check(this, 'A', 'q2-fb')">A. Yes, derivative zero always means maximum / 是的</button></li>
+        <li><button onclick="check(this, 'B', 'q2-fb')">B. No — it could be a maximum, minimum, or inflection point. Need f″(x) or sign analysis to determine. Also, the optimum could be at a boundary / 不一定——可能是极大、极小或拐点。需要二阶导数或符号分析。边界处也可能有极值</button></li>
+        <li><button onclick="check(this, 'C', 'q2-fb')">C. Only for quadratic functions / 只有二次函数才成立</button></li>
+        <li><button onclick="check(this, 'D', 'q2-fb')">D. It's impossible to determine / 无法判定</button></li>
+      </ul>
+      <div class="quiz-feedback" id="q2-fb"></div>
+    </div>
+
+    <div class="quiz-q" id="q3">
+      <p><strong>Q3.</strong> S(x, r) = −3.5 means:</p>
+      <ul class="quiz-options">
+        <li><button onclick="check(this, 'A', 'q3-fb')">A. r increases by 1 unit → x decreases by 3.5 units / r 增加1单位 → x 减少3.5单位</button></li>
+        <li><button onclick="check(this, 'B', 'q3-fb')">B. A 1% increase in r → ≈ 3.5% decrease in x. The negative sign means they move in opposite directions. |S|=3.5>2 means the model is highly sensitive to r / r 增 1% → x 减约 3.5%。负号表示反向变化，|S|>2 表示高度敏感</button></li>
+        <li><button onclick="check(this, 'C', 'q3-fb')">C. Profit will decrease by 3.5% / 利润会下降 3.5%</button></li>
+        <li><button onclick="check(this, 'D', 'q3-fb')">D. The model has 3.5% error / 模型有 3.5% 的误差</button></li>
+      </ul>
+      <div class="quiz-feedback" id="q3-fb"></div>
+    </div>
+
+    <div class="quiz-q" id="q4">
+      <p><strong>Q4.</strong> In the pig problem, if r > 0.014, what is the optimal strategy and why?</p>
+      <ul class="quiz-options">
+        <li><button onclick="check(this, 'A', 'q4-fb')">A. Use the formula x = 0.28/r − 20 and take absolute value / 公式算出来取绝对值</button></li>
+        <li><button onclick="check(this, 'B', 'q4-fb')">B. Sell immediately (x=0), because f′(t) &lt; 0 for all t ≥ 0 — every extra day loses money / 立即卖出，因为 f′(t) 对所有 t≥0 都小于 0</button></li>
+        <li><button onclick="check(this, 'C', 'q4-fb')">C. Wait indefinitely for price to recover / 无限等待价格回升</button></li>
+        <li><button onclick="check(this, 'D', 'q4-fb')">D. It doesn't matter when to sell / 什么时候卖都一样</button></li>
+      </ul>
+      <div class="quiz-feedback" id="q4-fb"></div>
+    </div>
+
+  </div>
+</div>
+
+<div class="ask-agent">
+  💬 <strong>有问题？</strong>直接问我。For example: "Explain why f′(x)=0 is only a necessary condition, not sufficient."
+  "Give me a sensitivity analysis problem to solve and grade my answer."
+</div>
+
+<div class="nav">
+  <span></span>
+  <a href="0002-sensitivity-analysis-deep.html">下一课：0002 · Sensitivity Analysis Practice →</a>
+</div>
+
+<script>
+function check(btn, answer, fbId) {
+  const fb = document.getElementById(fbId);
+  const buttons = btn.parentElement.parentElement.querySelectorAll('button');
+  buttons.forEach(b => { b.disabled = true; b.classList.remove('correct', 'wrong'); });
+  const correctAnswers = { 'q1-fb': 'B', 'q2-fb': 'B', 'q3-fb': 'B', 'q4-fb': 'B' };
+  const explanations = {
+    'q1-fb': {
+      A: '✗ Data/Model/Solution is not the structure of Step 1.',
+      B: '✓ Correct. Step 1 = Variables (labeled with units) + Assumptions (equations connecting them) + Objective (maximize/minimize, precisely stated).',
+      C: '✗ Too vague. Step 1 requires specific mathematical elements.',
+      D: '✗ This is a general computing framework, not Step 1.'
+    },
+    'q2-fb': {
+      A: '✗ No. f(x)=x³ has f′(0)=0 but x=0 is an inflection point (not an extremum). f(x)=−x² has f′(0)=0 and x=0 is a maximum. f(x)=x² has f′(0)=0 and x=0 is a minimum.',
+      B: '✓ Correct. f′(x)=0 gives <strong>candidate points</strong> (stationary points). Use the second derivative test (f″(x)<0 → max; f″(x)>0 → min) or sign analysis. Also check boundaries (e.g., t=0).',
+      C: '✗ This applies to any differentiable function, not just quadratics. sin(x) has extrema where cos(x)=0.',
+      D: '✗ Mathematics gives us clear tools: second derivative test and first derivative sign analysis.'
+    },
+    'q3-fb': {
+      A: '✗ Sensitivity is about <strong>percentage</strong> changes, not absolute changes. r has units ($/day), x has units (days) — you cannot directly compare them.',
+      B: '✓ Correct. S is dimensionless: (dx/x)/(dr/r) = percentage change in x per percentage change in r. Negative = opposite direction, |3.5|>2 = highly sensitive.',
+      C: '✗ S(x,r) is about the sensitivity of the <strong>optimal time x</strong> to r, not the sensitivity of profit y. S(y,r) is a different calculation.',
+      D: '✗ S is not an error metric; it's a sensitivity (elasticity) measure.'
+    },
+    'q4-fb': {
+      A: '✗ Absolute value has no mathematical justification here. A negative time has no physical meaning.',
+      B: '✓ Correct. When r > 0.014, the vertex of the parabola lies at t < 0 (outside the feasible region). f′(t) < 0 for all t ≥ 0, so profit strictly decreases — sell immediately.',
+      C: '✗ The model assumes price declines linearly forever. There is no "recovery" in this model.',
+      D: '✗ Profit clearly depends on when you sell. At t=0, P=130; at t=10 (with r=0.015), P is much lower.'
+    }
+  };
+  const correct = correctAnswers[fbId];
+  const expl = explanations[fbId];
+  buttons.forEach(b => { if (b.textContent.trim().charAt(0) === correct) b.classList.add('correct'); });
+  if (answer === correct) { btn.classList.add('correct'); fb.innerHTML = '✓ ' + expl[answer]; }
+  else { btn.classList.add('wrong'); fb.innerHTML = '✗ ' + (expl[answer] || '') + '<br><br><strong>✓ Correct answer / 正确答案：</strong>' + expl[correct]; }
+}
+</script>
+
+</body>
+</html>

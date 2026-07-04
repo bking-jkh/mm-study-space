@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>数学建模 · 术语表</title>
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+
+<h1>数学建模术语表</h1>
+<div class="lesson-meta">考试快速查阅 · 随时更新</div>
+
+<h2>A–D</h2>
+
+<h3>Convex Function（凸函数）</h3>
+<p>定义在凸集 E 上的函数 f，满足 f(λx+(1−λ)y) ≤ λf(x)+(1−λ)f(y)。凸函数的任何局部极小值也是全局极小值——这是优化算法的理论基础。</p>
+
+<h3>Convex Set（凸集）</h3>
+<p>集合中任意两点的连线仍在该集合内：∀x,y∈E, λ∈(0,1), λx+(1−λ)y∈E。</p>
+
+<h3>Directional Derivative（方向导数）</h3>
+<p>函数 f 在点 x 沿单位向量 u 方向的变化率：Dᵤf(x) = lim_{t→0⁺} [f(x+tu)−f(x)]/t。Dᵤf(x) ≥ 0 表示沿 u 方向递增。</p>
+
+<h2>F–G</h2>
+
+<h3>Five-Step Method（五步法）</h3>
+<p>数学建模的标准流程：① 提出问题（变量、假设、目标）→ ② 选择方法 → ③ 列出模型 → ④ 求解模型 → ⑤ 用非技术语言回答问题。</p>
+
+<h3>FPPA（不动点邻近算法）</h3>
+<p>Fixed-Point Proximity Algorithm。通过邻近算子和不动点迭代求解带非光滑项的优化问题，应用于图像去噪、投资组合优化等。</p>
+
+<h3>Gradient（梯度）</h3>
+<p>∇f(x) = (∂f/∂x₁, …, ∂f/∂xₙ)ᵀ。梯度的方向是函数增长最快的方向，梯度的负方向是最速下降方向。</p>
+
+<h2>H–M</h2>
+
+<h3>Hessian Matrix</h3>
+<p>二阶偏导数矩阵。在多变量优化中，若 ∇f(x*)=0 且 Hessian 正定，则 x* 是局部极小值。</p>
+
+<h3>Lagrange Multiplier（拉格朗日乘数法）</h3>
+<p>处理等式约束优化的方法。将约束 g(x)=c 纳入目标函数：L(x,λ) = f(x) − λ(g(x)−c)，然后对 x 和 λ 求偏导为零。</p>
+
+<h3>Linear Regression（线性回归）</h3>
+<p>模型 y = β₀ + β₁X₁ + … + βₖXₖ + ε。关键在于——<strong>线性是对参数 β 而言，不是对 X 而言</strong>。y = β₁X₁² + β₂ln(X₂) 仍是线性模型。</p>
+
+<h3>Multicollinearity（多重共线性）</h3>
+<p>自变量之间存在近似线性关系（Xa ≈ 0）。后果：|XᵀX| ≈ 0，导致 (XᵀX)⁻¹ 对角元极大 → 回归系数估计方差极大 → 估计不可靠。等价于 XᵀX 存在接近 0 的特征值。</p>
+
+<h2>N–O</h2>
+
+<h3>Newton's Method（牛顿法）</h3>
+<p>求根迭代公式：x_{n+1} = x_n − F(x_n)/F′(x_n)。几何意义：在 xₙ 处作切线，与 x 轴交点作为下一次近似。收敛速度是二次的（极快），但需要好的初值。</p>
+
+<h3>Objective Function（目标函数）</h3>
+<p>你希望最大化或最小化的函数。在 Step 1 中以精确的数学语言表述。</p>
+
+<h2>S</h2>
+
+<h3>Sensitivity Analysis（灵敏度分析）</h3>
+<p>研究模型输出对输入参数变化的响应程度。公式：S(y, p) ≈ (Δy/y) / (Δp/p)。|S| 大 → 对该参数敏感 → 该参数必须准确估计。</p>
+
+</body>
+</html>

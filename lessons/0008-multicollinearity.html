@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 0008: 多重共线性 / Multicollinearity</title>
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+
+<h1>0008 · 多重共线性<br><small style="font-size:1.1rem;color:var(--muted);">Multicollinearity</small></h1>
+<div class="lesson-meta">
+  基于 Lecture 8/10 (Lin, JNU) · 预计阅读 20 分钟
+</div>
+
+<h2>1. What is multicollinearity? / 什么是多重共线性？</h2>
+
+<div class="formula-block">
+<strong>Perfect multicollinearity / 完美共线性：</strong><br>
+∃ a ≠ 0 such that <strong>Xa = 0</strong> → rank(X) &lt; K+1 → |XᵀX| = 0 → (XᵀX)⁻¹ <strong>does not exist</strong>.<br><br>
+<strong>Approximate multicollinearity / 近似共线性（现实中常见）：</strong><br>
+<strong>Xa ≈ 0</strong> → |XᵀX| ≈ 0 → (XᵀX)⁻¹ <strong>exists but extremely unstable</strong>.
+</div>
+
+<div class="concept-box">
+  <strong>Intuition / 直观理解：</strong><br>
+  If you use both "height in cm" and "height in inches" to predict weight,<br>
+  the two variables are almost perfectly correlated → the model can't tell which one is doing the work.<br>
+  <em>用「身高(cm)」和「身高(吋)」同时预测体重，两个变量几乎完全线性相关，模型无法区分各自贡献。</em>
+</div>
+
+<h2>2. Why is it harmful? / 为什么有害？</h2>
+
+<div class="formula-block">
+<strong>Causal chain / 因果链：</strong><br>
+X columns nearly linearly dependent / X 的列近似线性相关<br>
+→ <strong>|XᵀX| ≈ 0</strong> (determinant near zero / 行列式接近零)<br>
+→ <strong>(XᵀX)⁻¹ has huge diagonal entries</strong> / 逆矩阵对角元爆炸<br>
+→ D(b̂) = σ²(XᵀX)⁻¹ → <strong>var(β̂ⱼ) extremely large</strong> / 方差极大<br>
+→ Estimates unstable, t-statistics insignificant, signs may flip! / 系数不稳定，t 检验不显著，符号甚至可能反转
+</div>
+
+<h2>3. Three Equivalent Characterizations / 三种等价表征 ⭐ 考试常考</h2>
+
+<div class="formula-block">
+<strong>Theorem / 定理：</strong>以下三条<strong>等价 (equivalent)</strong>：<br>
+<strong>(i)</strong> Columns of X exhibit (approximate) multicollinearity / X 列近似线性相关<br>
+<strong>(ii)</strong> XᵀX has an eigenvalue ≈ 0 / XᵀX 存在接近 0 的特征值<br>
+<strong>(iii)</strong> |XᵀX| ≈ 0 / 行列式接近零<br><br>
+<strong>Proof sketch / 证明思路：</strong><br>
+XᵀX is symmetric positive semi-definite → orthogonally diagonalizable: XᵀX = UΛUᵀ<br>
+Λ = diag(λ₁,…,λₙ), λ₁ ≥ … ≥ λₙ ≥ 0.<br>
+(i)→(ii): Xa≈0 → aᵀXᵀXa≈0 → zᵀΛz≈0 (z=Uᵀa≠0) → ∃λⱼ≈0.<br>
+(ii)→(iii): |XᵀX| = Πλᵢ, λⱼ≈0 → product ≈0.<br>
+(iii)→(ii): Πλᵢ≈0 → at least one λⱼ≈0 → corresponding eigenvector u gives Xu≈0.
+</div>
+
+<h2>4. VIF / 方差膨胀因子 (Variance Inflation Factor)</h2>
+
+<div class="formula-block">
+For bivariate regression (two independent variables):<br>
+<strong>var(β̂₁) = σ² / [Σ(x₁ᵢ−x̄₁)² · (1 − r₁₂²)]</strong><br>
+where r₁₂ = sample correlation between x₁ and x₂.<br><br>
+<strong>VIF₁ = 1/(1 − r₁₂²)</strong><br>
+As r₁₂² → 1 (high correlation) → VIF → ∞ → var(β̂₁) → ∞<br><br>
+<strong>Rule of thumb / 经验法则：</strong>VIF > 10 (i.e., r² > 0.9) → serious multicollinearity / 严重共线性。
+</div>
+
+<h2>5. Remedies / 补救方法</h2>
+<ul>
+  <li><strong>Drop variables / 删除变量：</strong>remove redundant predictors</li>
+  <li><strong>Ridge regression / 岭回归：</strong>β̂ = (XᵀX + λI)⁻¹Xᵀy — stabilize by adding λ to diagonal (biased but lower variance)</li>
+  <li><strong>Principal Component Regression / 主成分回归：</strong>project correlated X onto uncorrelated principal components</li>
+  <li><strong>Increase sample size / 增大样本量：</strong>more data reduces (but doesn't eliminate) the problem</li>
+</ul>
+
+<div class="quiz-block">
+  <div class="quiz-header">Retrieval Practice</div>
+  <div class="quiz-body">
+    <div class="quiz-q" id="q1">
+      <p><strong>Q1.</strong> What is the direct consequence of approximate multicollinearity?</p>
+      <ul class="quiz-options">
+        <li><button onclick="check(this, 'A', 'q1-fb')">A. The model fails to converge / 模型无法收敛</button></li>
+        <li><button onclick="check(this, 'B', 'q1-fb')">B. (XᵀX)⁻¹ has huge diagonal entries → var(β̂ⱼ) is enormous → estimates are highly volatile with wide confidence intervals / 逆矩阵对角元爆炸 → 方差极大 → 估计极不稳定</button></li>
+        <li><button onclick="check(this, 'C', 'q1-fb')">C. R² is guaranteed to be low / R² 一定很低</button></li>
+        <li><button onclick="check(this, 'D', 'q1-fb')">D. The dependent variable y becomes unpredictable / 因变量不可预测</button></li>
+      </ul>
+      <div class="quiz-feedback" id="q1-fb"></div>
+    </div>
+    <div class="quiz-q" id="q2">
+      <p><strong>Q2.</strong> Why is |XᵀX|≈0 equivalent to multicollinearity?</p>
+      <ul class="quiz-options">
+        <li><button onclick="check(this, 'A', 'q2-fb')">A. Coincidence / 巧合</button></li>
+        <li><button onclick="check(this, 'B', 'q2-fb')">B. |XᵀX|=Πλᵢ. Columns nearly dependent → eigenvalue≈0 → determinant≈0. Conversely, determinant≈0 → some eigenvalue≈0 → there exists u≠0 with Xu≈0 → columns nearly dependent / 行列式是特征值之积，共线性 ⟺ 有接近0的特征值 ⟺ 行列式接近0</button></li>
+        <li><button onclick="check(this, 'C', 'q2-fb')">C. Only true for 2×2 matrices / 仅对 2×2 矩阵成立</button></li>
+        <li><button onclick="check(this, 'D', 'q2-fb')">D. Only when X has missing values / 仅当 X 有缺失值时成立</button></li>
+      </ul>
+      <div class="quiz-feedback" id="q2-fb"></div>
+    </div>
+  </div>
+</div>
+
+<div class="nav">
+  <a href="0007-linear-regression.html">← Prev: 0007 · Linear Regression</a>
+  <a href="0009-applications.html">Next: 0009 · Applications →</a>
+</div>
+
+<script>
+function check(btn, answer, fbId) {
+  const fb = document.getElementById(fbId);
+  const buttons = btn.parentElement.parentElement.querySelectorAll('button');
+  buttons.forEach(b => { b.disabled = true; b.classList.remove('correct', 'wrong'); });
+  const correctAnswers = { 'q1-fb': 'B', 'q2-fb': 'B' };
+  const explanations = {
+    'q1-fb': { A:'✗ The model still fits — the problem is unreliable estimates, not failure to converge.', B:'✓ Correct. OLS is still unbiased, but the variance is so large the estimates are practically useless.', C:'✗ R² can be high even with severe multicollinearity.', D:'✗ Overall prediction may still be OK — individual coefficient interpretation is the casualty.' },
+    'q2-fb': { A:'✗ This is a rigorous mathematical equivalence.', B:'✓ Correct. This equivalence is based on the spectral decomposition XᵀX=UΛUᵀ and the fact that determinant = product of eigenvalues.', C:'✗ Holds for any square matrix.', D:'✗ Multicollinearity and missing values are distinct issues.' }
+  };
+  const correct = correctAnswers[fbId];
+  const expl = explanations[fbId];
+  buttons.forEach(b => { if (b.textContent.trim().charAt(0) === correct) b.classList.add('correct'); });
+  if (answer === correct) { btn.classList.add('correct'); fb.innerHTML = '✓ ' + expl[answer]; }
+  else { btn.classList.add('wrong'); fb.innerHTML = '✗ ' + (expl[answer] || '') + '<br><br><strong>✓ Correct:</strong> ' + expl[correct]; }
+}
+</script>
+
+</body>
+</html>

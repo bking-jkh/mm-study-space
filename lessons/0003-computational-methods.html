@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 0003: 计算优化方法 / Computational Methods for Optimization</title>
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+
+<h1>0003 · 计算优化方法<br><small style="font-size:1.1rem;color:var(--muted);">Computational Methods for Optimization</small></h1>
+<div class="lesson-meta">
+  基于 Lecture 3 (Lin, JNU) &amp; Meerschaert §3.1–3.3 · 预计阅读 35 分钟
+</div>
+
+<h2>1. 为什么需要计算方法？/ Why Do We Need Computational Methods?</h2>
+
+<p>The plain and simple fact is that <strong>most equations cannot be solved analytically</strong>. / 绝大多数方程无法解析求解。</p>
+
+<div class="formula-block">
+Nonlinear pig growth example / 非线性猪增长例子：<br>
+dw/dt = c·w, w(0) = 200 → <strong>w = 200e<sup>0.025t</sup></strong><br>
+f′(x) = (130c − 2cx)e<sup>cx</sup> − 0.45 = 0<br>
+→ <strong>This equation has no closed-form solution / 无法手算解出。</strong>
+</div>
+
+<div class="concept-box">
+  <strong>The two-stage strategy / 两阶段策略（贯穿整个数值求解的范式）：</strong><br>
+  ① <strong>Global method / 全局方法：</strong>graphing or random search → locate the approximate region of the optimum<br>
+  ② <strong>Local method / 局部方法：</strong>Newton's method or golden section → refine to desired accuracy<br><br>
+  Global methods are slow but robust; local methods are fast but need a good starting point.<br>
+  <em>全局方法慢但稳健，局部方法快但需要好初值。两者配合使用。</em>
+</div>
+
+<h2>2. 图形法 / Graphical Method — The Simplest Global Method</h2>
+
+<div class="formula-block">
+f(x) = (0.65 − 0.01x)(200e<sup>0.025x</sup>) − 0.45x (x ≥ 0)<br><br>
+<strong>First plot (x: 0→20) / 第一轮画图：</strong>peak appears near x ≈ 19–20<br>
+<strong>First zoom-in / 第一次放大：</strong>peak at x ≈ 19.5<br>
+<strong>Second zoom-in / 第二次放大：</strong>x ≈ 19.47, f(x) ≈ 139.395<br><br>
+Final estimate / 最终估计：<strong>x* ≈ 19.5</strong><br><br>
+<strong>Pros / 优点：</strong>intuitive, no derivatives needed, gives global perspective<br>
+<strong>Cons / 缺点：</strong>low accuracy (each decimal costs 10× work), cannot go beyond 2–3 dimensions
+</div>
+
+<div class="concept-box">
+  <strong>Complete graph / 完整图：</strong>A complete graph shows <strong>all important features</strong> of f over the entire domain S — all extrema, zeros, and asymptotic behavior. Don't just plot a small window and miss the big picture.
+</div>
+
+<h2>3. 牛顿法 / Newton's Method ⭐ 最重要的局部方法</h2>
+
+<h3>3.1 Core idea / 核心思想：用切线代替函数 / Replace function with tangent line</h3>
+
+<div class="formula-block">
+We need to solve <strong>F(x) = 0</strong> (e.g., F(x) = f′(x) for optimization).<br><br>
+<strong>Step 1 / 第一步：在 x₀ 处做切线 / Draw tangent at x₀</strong><br>
+Tangent line equation / 切线方程：y = F(x₀) + F′(x₀)(x − x₀)<br><br>
+<strong>Step 2 / 第二步：找切线与 x 轴的交点 / Find where tangent crosses x-axis</strong><br>
+Set y = 0: 0 = F(x₀) + F′(x₀)(x − x₀)<br>
+→ <strong>x₁ = x₀ − F(x₀)/F′(x₀)</strong><br><br>
+<strong>Step 3 / 第三步：重复！/ Repeat!</strong><br>
+<strong>x_{n+1} = x_n − F(x_n)/F′(x_n)</strong>
+</div>
+
+<div class="concept-box">
+  <strong>Geometric intuition / 几何直觉：</strong><br>
+  Imagine you're on a hillside at x₀, wanting to reach the valley bottom (where F(x)=0).<br>
+  You look at the slope at your feet (F′(x₀)), extrapolate linearly to where the ground would hit sea level,<br>
+  walk there (x₁), and reassess. Each step gets you closer.<br><br>
+  <strong>Why is it fast? / 为什么快？</strong><br>
+  The tangent line is the <strong>best linear approximation</strong> (1st-order Taylor expansion).<br>
+  Near a root, Newton's method converges <strong>quadratically</strong> — effective digits double each iteration!
+</div>
+
+<h3>3.2 Newton's method for optimization / 牛顿法用于优化</h3>
+
+<div class="formula-block">
+To optimize f(x), we solve f′(x) = 0. Set <strong>F(x) = f′(x)</strong>:<br>
+<strong>x_{n+1} = x_n − f′(x_n)/f″(x_n)</strong><br><br>
+Requires <strong>second derivative f″(x)</strong> — must be computable and non-zero near the root.
+</div>
+
+<h3>3.3 Pseudocode / 伪代码</h3>
+
+<div class="formula-block">
+<strong>Input:</strong> x₀ (initial guess), N (max iterations), ε (tolerance)<br>
+<strong>For n = 0 to N−1:</strong><br>
+&nbsp;&nbsp;&nbsp;&nbsp;x_{n+1} = x_n − F(x_n) / F′(x_n)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<strong>If</strong> |x_{n+1} − x_n| &lt; ε → <strong>return</strong> x_{n+1}<br>
+<strong>Output:</strong> x_N<br><br>
+<strong>⚠️ Fails if / 失败情况：</strong>F′(x_n) ≈ 0 (tangent parallel to x-axis → division by zero),<br>
+or if x₀ is too far from the root (may diverge).
+</div>
+
+<h3>3.4 Application / 应用：非线性猪问题</h3>
+
+<div class="formula-block">
+F(x) = (130c − 2cx)e<sup>cx</sup> − 0.45 = 0, c = 0.025<br>
+Graphical method gives x₀ = 19.5 / 图形法给出初值<br>
+Newton iterates 10× → converges to <strong>x ≈ 19.468</strong><br><br>
+Sensitivity via Newton / 用牛顿法做灵敏度：<br>
+c=0.025 (baseline) → x=19.47; c=0.02525 (+1%) → x=20.02 (+2.84%)<br>
+→ <strong>S(x, c) ≈ 2.84</strong>
+</div>
+
+<h2>4. 黄金分割搜索 / Golden Section Search</h2>
+
+<p>For <strong>unimodal functions</strong> (single peak/valley). Requires <strong>no derivatives</strong>. / 适用于单峰函数，不需要导数。</p>
+
+<div class="formula-block">
+<strong>Golden ratio / 黄金比例：</strong>φ = (√5 − 1)/2 ≈ <strong>0.618</strong><br>
+1 − φ ≈ <strong>0.382</strong><br><br>
+<strong>Test points / 测试点：</strong><br>
+c = a + (1−φ)(b−a) &nbsp;（左 38% 处）<br>
+d = a + φ(b−a) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;（右 62% 处）<br><br>
+<strong>Decision rule (for a minimum) / 判断规则（求最小值）：</strong><br>
+If f(c) &lt; f(d): min is in [a, d] → set b = d<br>
+If f(c) ≥ f(d): min is in [c, b] → set a = c<br><br>
+<strong>Key advantage / 核心优势：</strong>each iteration only needs <strong>one new function evaluation</strong> — the other test point is inherited!<br>
+<em>每次迭代只需一个<strong>新</strong>函数值，另一个复用！</em>
+</div>
+
+<h2>5. Method Comparison / 方法对比</h2>
+
+<table style="width:100%; border-collapse:collapse; margin:1rem 0;">
+  <tr style="border-bottom:2px solid var(--accent);">
+    <th style="text-align:left; padding:0.4rem;">Method / 方法</th><th style="text-align:left; padding:0.4rem;">Derivatives? / 需导数</th><th style="text-align:left; padding:0.4rem;">Type / 类型</th><th style="text-align:left; padding:0.4rem;">Speed / 速度</th><th style="text-align:left; padding:0.4rem;">Dimension / 维数</th>
+  </tr>
+  <tr style="border-bottom:1px solid #eee;"><td style="padding:0.4rem;">Graphical / 图形法</td><td style="padding:0.4rem;">No</td><td style="padding:0.4rem;">Global</td><td style="padding:0.4rem;">Slow</td><td style="padding:0.4rem;">≤ 2</td></tr>
+  <tr style="border-bottom:1px solid #eee;"><td style="padding:0.4rem;">Newton's / 牛顿法</td><td style="padding:0.4rem;">1st + 2nd</td><td style="padding:0.4rem;">Local</td><td style="padding:0.4rem;">Very fast (quadratic)</td><td style="padding:0.4rem;">Any / 任意</td></tr>
+  <tr style="border-bottom:1px solid #eee;"><td style="padding:0.4rem;">Golden Section / 黄金分割</td><td style="padding:0.4rem;">No</td><td style="padding:0.4rem;">Local (unimodal)</td><td style="padding:0.4rem;">Linear</td><td style="padding:0.4rem;">1 only</td></tr>
+  <tr><td style="padding:0.4rem;">Random Search / 随机搜索</td><td style="padding:0.4rem;">No</td><td style="padding:0.4rem;">Global</td><td style="padding:0.4rem;">Slow</td><td style="padding:0.4rem;">Any / 任意</td></tr>
+</table>
+
+<div class="quiz-block">
+  <div class="quiz-header">Retrieval Practice / 检索练习</div>
+  <div class="quiz-body">
+    <div class="quiz-q" id="q1">
+      <p><strong>Q1.</strong> Where does the Newton iteration formula x₁ = x₀ − F(x₀)/F′(x₀) come from?</p>
+      <ul class="quiz-options">
+        <li><button onclick="check(this, 'A', 'q1-fb')">A. From quadratic interpolation / 二次插值</button></li>
+        <li><button onclick="check(this, 'B', 'q1-fb')">B. Linearize F at x₀: F(x) ≈ F(x₀) + F′(x₀)(x−x₀). Set to zero, solve for x / 在 x₀ 处线性近似 F，令其为零解出 x</button></li>
+        <li><button onclick="check(this, 'C', 'q1-fb')">C. Random trial and error / 随机试错</button></li>
+        <li><button onclick="check(this, 'D', 'q1-fb')">D. From integration / 从积分推导</button></li>
+      </ul>
+      <div class="quiz-feedback" id="q1-fb"></div>
+    </div>
+    <div class="quiz-q" id="q2">
+      <p><strong>Q2.</strong> Why use a two-stage strategy (global + local)?</p>
+      <ul class="quiz-options">
+        <li><button onclick="check(this, 'A', 'q2-fb')">A. Programming convenience / 编程方便</button></li>
+        <li><button onclick="check(this, 'B', 'q2-fb')">B. Local methods (Newton) are fast but sensitive to starting point. Global methods (graphing) first find the right neighborhood, then local methods refine precisely / 局部方法快但对初值敏感，全局方法先圈定范围</button></li>
+        <li><button onclick="check(this, 'C', 'q2-fb')">C. To compare methods / 比较方法</button></li>
+        <li><button onclick="check(this, 'D', 'q2-fb')">D. Local methods are too slow alone / 局部方法单独太慢</button></li>
+      </ul>
+      <div class="quiz-feedback" id="q2-fb"></div>
+    </div>
+    <div class="quiz-q" id="q3">
+      <p><strong>Q3.</strong> Why does Golden Section Search reuse one test point each iteration?</p>
+      <ul class="quiz-options">
+        <li><button onclick="check(this, 'A', 'q3-fb')">A. Because φ ≈ 0.618 is chosen so the surviving interior point is exactly at the required position in the new interval / φ 恰好使保留的内部点落在新区间的测试位置</button></li>
+        <li><button onclick="check(this, 'B', 'q3-fb')">B. Random luck / 随机巧合</button></li>
+        <li><button onclick="check(this, 'C', 'q3-fb')">C. The algorithm recalculates both points every time / 每次重新算两个</button></li>
+        <li><button onclick="check(this, 'D', 'q3-fb')">D. It doesn't actually reuse anything / 不复用</button></li>
+      </ul>
+      <div class="quiz-feedback" id="q3-fb"></div>
+    </div>
+  </div>
+</div>
+
+<div class="nav">
+  <a href="0002-sensitivity-analysis-deep.html">← Prev: 0002 · Sensitivity</a>
+  <a href="0004-multivariable-optimization.html">Next: 0004 · Multivariable Optimization →</a>
+</div>
+
+<script>
+function check(btn, answer, fbId) {
+  const fb = document.getElementById(fbId);
+  const buttons = btn.parentElement.parentElement.querySelectorAll('button');
+  buttons.forEach(b => { b.disabled = true; b.classList.remove('correct', 'wrong'); });
+  const correctAnswers = { 'q1-fb': 'B', 'q2-fb': 'B', 'q3-fb': 'A' };
+  const explanations = {
+    'q1-fb': { A:'✗ Newton uses linear approximation, not quadratic.', B:'✓ Correct. The entire idea: replace F with its tangent line (best linear approx), solve the line\'s zero.', C:'✗ Newton is deterministic, not random.', D:'✗ Based on differentiation, not integration.' },
+    'q2-fb': { A:'✗', B:'✓ Correct. Newton converges locally — it needs a good initial guess. Global methods provide that guess.', C:'✗', D:'✗ Local methods are actually faster than global ones.' },
+    'q3-fb': { A:'✓ Correct. The golden ratio is the unique proportion where the surviving interior point is perfectly positioned in the new interval.', B:'✗ This is by design.', C:'✗', D:'✗ Reuse is the defining advantage of Golden Section Search.' }
+  };
+  const correct = correctAnswers[fbId];
+  const expl = explanations[fbId];
+  buttons.forEach(b => { if (b.textContent.trim().charAt(0) === correct) b.classList.add('correct'); });
+  if (answer === correct) { btn.classList.add('correct'); fb.innerHTML = '✓ ' + expl[answer]; }
+  else { btn.classList.add('wrong'); fb.innerHTML = '✗ ' + (expl[answer] || '') + '<br><br><strong>✓ Correct:</strong> ' + expl[correct]; }
+}
+</script>
+
+</body>
+</html>

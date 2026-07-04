@@ -1,0 +1,149 @@
+/* Tufte-inspired stylesheet for Math Modeling lessons */
+:root {
+  --bg: #fffff8;
+  --text: #111;
+  --accent: #8b0000;
+  --light-accent: #fff5f5;
+  --border: #ddd;
+  --code-bg: #f7f7f7;
+  --muted: #666;
+  --quiz-correct: #2d7d46;
+  --quiz-wrong: #c0392b;
+  --width: 720px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: "Palatino", "Palatino Linotype", "Georgia", serif;
+  font-size: 18px;
+  line-height: 1.7;
+  color: var(--text);
+  background: var(--bg);
+  max-width: var(--width);
+  margin: 0 auto;
+  padding: 2rem 1.5rem 4rem;
+}
+
+h1 { font-size: 2.2rem; margin: 0 0 0.3rem; font-weight: 700; letter-spacing: -0.02em; }
+h2 { font-size: 1.5rem; margin: 2.2rem 0 0.8rem; font-weight: 600; border-bottom: 1px solid var(--border); padding-bottom: 0.3rem; }
+h3 { font-size: 1.2rem; margin: 1.6rem 0 0.5rem; font-weight: 600; }
+
+.lesson-meta {
+  color: var(--muted);
+  font-size: 0.95rem;
+  margin-bottom: 2rem;
+}
+.lesson-meta a { color: var(--accent); }
+
+p { margin: 0 0 1rem; }
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* Sidenote-style callout */
+.sidenote {
+  float: right;
+  clear: right;
+  width: 200px;
+  margin-right: -230px;
+  font-size: 0.85rem;
+  color: var(--muted);
+  line-height: 1.4;
+  margin-top: 0.3rem;
+}
+@media (max-width: 1100px) {
+  .sidenote { float: none; width: auto; margin: 0.5rem 0; padding: 0.5rem 0.8rem; background: var(--light-accent); border-left: 3px solid var(--accent); }
+}
+
+/* Key concept box */
+.concept-box {
+  background: var(--light-accent);
+  border-left: 4px solid var(--accent);
+  padding: 1rem 1.2rem;
+  margin: 1.2rem 0;
+  border-radius: 0 4px 4px 0;
+}
+.concept-box strong { color: var(--accent); }
+
+/* Step numbering */
+.step-list { list-style: none; padding: 0; counter-reset: step; }
+.step-list li {
+  counter-increment: step;
+  padding: 0.8rem 0 0.8rem 3rem;
+  margin: 0.5rem 0;
+  position: relative;
+  background: var(--light-accent);
+  border-radius: 4px;
+}
+.step-list li::before {
+  content: "Step " counter(step);
+  position: absolute;
+  left: 0.6rem;
+  top: 0.8rem;
+  font-weight: 700;
+  color: var(--accent);
+  font-size: 0.9rem;
+}
+
+/* Formula */
+.formula {
+  text-align: center;
+  margin: 1.2rem 0;
+  font-style: italic;
+}
+.formula-block {
+  background: var(--code-bg);
+  padding: 1rem 1.2rem;
+  margin: 1rem 0;
+  border-radius: 4px;
+  overflow-x: auto;
+  font-family: "SF Mono", "Monaco", "Menlo", monospace;
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+/* Quiz */
+.quiz-block {
+  margin: 2rem 0;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+}
+.quiz-header {
+  background: var(--light-accent);
+  padding: 0.6rem 1rem;
+  font-weight: 600;
+  color: var(--accent);
+}
+.quiz-body { padding: 1rem 1.2rem; }
+.quiz-q { margin-bottom: 1.2rem; }
+.quiz-q p { margin-bottom: 0.4rem; font-weight: 600; }
+.quiz-options { list-style: none; padding: 0; }
+.quiz-options li { margin: 0.3rem 0; }
+.quiz-options button {
+  width: 100%; text-align: left; padding: 0.5rem 0.8rem;
+  border: 1px solid var(--border); border-radius: 4px;
+  background: white; cursor: pointer; font-size: 0.95rem;
+  transition: background 0.15s;
+}
+.quiz-options button:hover { background: var(--light-accent); }
+.quiz-options button.correct { background: #d4edda; border-color: var(--quiz-correct); color: var(--quiz-correct); }
+.quiz-options button.wrong { background: #f8d7da; border-color: var(--quiz-wrong); color: var(--quiz-wrong); }
+.quiz-feedback { margin-top: 0.5rem; font-size: 0.9rem; min-height: 1.3rem; }
+
+/* Navigation */
+.nav { display: flex; justify-content: space-between; margin-top: 3rem; padding-top: 1rem; border-top: 1px solid var(--border); font-size: 0.95rem; }
+
+/* Summary box */
+.summary { background: #fefdf5; border: 1px solid #e8e4c0; padding: 1rem 1.2rem; border-radius: 4px; margin: 1.5rem 0; }
+.summary h4 { color: var(--accent); margin-bottom: 0.4rem; }
+
+/* Ask agent reminder */
+.ask-agent {
+  margin: 1.5rem 0;
+  padding: 0.6rem 1rem;
+  background: #f0f4ff;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  color: #444;
+}

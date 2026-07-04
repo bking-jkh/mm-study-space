@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 0007: 线性回归 / Linear Regression</title>
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+
+<h1>0007 · 线性回归模型<br><small style="font-size:1.1rem;color:var(--muted);">Linear Regression Model</small></h1>
+<div class="lesson-meta">
+  基于 Lecture 7 (Lin, JNU) · 预计阅读 30 分钟
+</div>
+
+<h2>1. What is regression? / 什么是回归？</h2>
+
+<p>Given data points (xₜ, yₜ), find the <strong>best-fitting straight line</strong> y = β₀ + β₁x.<br>
+<em>给一堆数据点，找一条最佳拟合直线。</em></p>
+
+<div class="formula-block">
+<strong>General model / 一般模型：</strong><br>
+<strong>y = f(X₁,…,Xₖ, β₀,…,βₖ) + ε</strong><br>
+• y: <strong>dependent variable</strong> / 因变量 (random / 随机)<br>
+• Xⱼ: <strong>independent variables</strong> / 自变量 (non-stochastic / 非随机，由实验者控制)<br>
+• βⱼ: <strong>parameters</strong> / 参数 (to be estimated / 待估计)<br>
+• ε: <strong>random error</strong> / 随机误差 ~ i.i.d. N(0, σ²)
+</div>
+
+<h2>2. "Linear" means linear in parameters!</h2>
+<div class="concept-box">
+  <strong>⭐ High-frequency exam point / 高频考点：</strong><br>
+  A model is <strong>linear</strong> if it is <strong>linear in the parameters β</strong>, NOT necessarily linear in X.<br>
+  <em>线性是对参数 β 而言，不是对自变量 X 而言！</em><br><br>
+  <strong>Test / 判定方法：</strong>compute ∂y/∂βⱼ. If <strong>none</strong> of them contain any β → linear model.<br><br>
+  ✓ Linear: <strong>y = β₀ + β₁X₁² + β₂√X₂ + ε</strong><br>
+  &nbsp;&nbsp;∂y/∂β₁ = X₁² (no β), ∂y/∂β₂ = √X₂ (no β) → linear!<br><br>
+  ✗ Nonlinear: <strong>y = β₁²X₁ + β₂√X₂ + ε</strong><br>
+  &nbsp;&nbsp;∂y/∂β₁ = 2β₁X₁ (contains β₁!) → nonlinear
+</div>
+
+<h2>3. Least Squares Estimation / 最小二乘法</h2>
+
+<div class="formula-block">
+For simple linear regression: <strong>yₜ = β₀ + β₁xₜ + εₜ</strong>, t = 1,…,T.<br><br>
+<strong>Residual Sum of Squares (RSS) / 残差平方和：</strong><br>
+S(β₀, β₁) = Σₜ₌₁ᵀ <strong>(yₜ − β₀ − β₁xₜ)²</strong><br><br>
+<strong>Normal equations / 正规方程（令偏导为零）：</strong><br>
+∂S/∂β₀ = −2Σ(yₜ − β₀ − β₁xₜ) = 0 → <strong>T·β₀ + β₁·Σxₜ = Σyₜ</strong><br>
+∂S/∂β₁ = −2Σ(yₜ − β₀ − β₁xₜ)·xₜ = 0 → <strong>β₀·Σxₜ + β₁·Σxₜ² = Σyₜxₜ</strong><br><br>
+<strong>Solution / 解：</strong><br>
+<strong>β̂₁ = [T·Σxₜyₜ − Σxₜ·Σyₜ] / [T·Σxₜ² − (Σxₜ)²]</strong><br>
+<strong>β̂₀ = ȳ − β̂₁·x̄</strong> &nbsp; (ȳ = Σyₜ/T, x̄ = Σxₜ/T)<br><br>
+<strong>Hessian verification / Hessian 验证：</strong><br>
+∂²S/∂β₀² = 2T &gt; 0, &nbsp; det(H) = 4T·Σ(xₜ−x̄)² &gt; 0 (if not all xₜ are equal)<br>
+→ H <strong>positive definite</strong> → S is <strong>strictly convex</strong> → unique global minimum! / 唯一全局最小！
+</div>
+
+<h2>4. Model Evaluation / 模型评估 — R²</h2>
+
+<div class="formula-block">
+<strong>Total variation decomposition / 总变差分解：</strong><br>
+<strong>SST = SSR + SSE</strong><br>
+Σ(yₜ−ȳ)² = Σ(ŷₜ−ȳ)² + Σ(yₜ−ŷₜ)²<br>
+Total = Explained by regression + Residual<br><br>
+<strong>R² = SSR / SST</strong> ∈ [0, 1]: proportion of variation explained by the model.<br><br>
+⚠️ High R² ≠ good model (overfitting possible). Low R² ≠ bad model (data may be inherently noisy).
+</div>
+
+<div class="quiz-block">
+  <div class="quiz-header">Retrieval Practice</div>
+  <div class="quiz-body">
+    <div class="quiz-q" id="q1">
+      <p><strong>Q1.</strong> Which model is linear?</p>
+      <ul class="quiz-options">
+        <li><button onclick="check(this, 'A', 'q1-fb')">A. y = β₀ + β₁²X₁ + ε</button></li>
+        <li><button onclick="check(this, 'B', 'q1-fb')">B. y = β₀ + β₁X₁ + β₂X₁² + β₃√X₂ + ε</button></li>
+        <li><button onclick="check(this, 'C', 'q1-fb')">C. y = e^{β₀+β₁X} + ε</button></li>
+        <li><button onclick="check(this, 'D', 'q1-fb')">D. y = 1/(1+e^{-β₀−β₁X}) + ε</button></li>
+      </ul>
+      <div class="quiz-feedback" id="q1-fb"></div>
+    </div>
+    <div class="quiz-q" id="q2">
+      <p><strong>Q2.</strong> Least squares is mathematically equivalent to what type of problem?</p>
+      <ul class="quiz-options">
+        <li><button onclick="check(this, 'A', 'q2-fb')">A. Unconstrained quadratic convex optimization: minimize RSS → normal equations / 无约束二次凸优化</button></li>
+        <li><button onclick="check(this, 'B', 'q2-fb')">B. Constrained nonlinear optimization / 有约束非线性优化</button></li>
+        <li><button onclick="check(this, 'C', 'q2-fb')">C. Random search / 随机搜索</button></li>
+        <li><button onclick="check(this, 'D', 'q2-fb')">D. Integer programming / 整数规划</button></li>
+      </ul>
+      <div class="quiz-feedback" id="q2-fb"></div>
+    </div>
+  </div>
+</div>
+
+<div class="nav">
+  <a href="0006-gradient-convex-fppa.html">← Prev: 0006 · Convexity</a>
+  <a href="0008-multicollinearity.html">Next: 0008 · Multicollinearity →</a>
+</div>
+
+<script>
+function check(btn, answer, fbId) {
+  const fb = document.getElementById(fbId);
+  const buttons = btn.parentElement.parentElement.querySelectorAll('button');
+  buttons.forEach(b => { b.disabled = true; b.classList.remove('correct', 'wrong'); });
+  const correctAnswers = { 'q1-fb': 'B', 'q2-fb': 'A' };
+  const explanations = {
+    'q1-fb': { A:'✗ ∂y/∂β₁=2β₁X₁ contains β₁ → nonlinear.', B:'✓ Correct. All ∂y/∂βⱼ are free of β — linear in parameters despite nonlinear transformations of X.', C:'✗ Exponential of parameters → nonlinear.', D:'✗ Logistic function → nonlinear.' },
+    'q2-fb': { A:'✓ Correct. RSS is a quadratic function of β; Hessian positive definite guarantees strict convexity; normal equations give the unique global minimum.', B:'✗ No constraints in basic least squares.', C:'✗ Least squares has a closed-form solution via normal equations.', D:'✗ β are continuous, not integers.' }
+  };
+  const correct = correctAnswers[fbId];
+  const expl = explanations[fbId];
+  buttons.forEach(b => { if (b.textContent.trim().charAt(0) === correct) b.classList.add('correct'); });
+  if (answer === correct) { btn.classList.add('correct'); fb.innerHTML = '✓ ' + expl[answer]; }
+  else { btn.classList.add('wrong'); fb.innerHTML = '✗ ' + (expl[answer] || '') + '<br><br><strong>✓ Correct:</strong> ' + expl[correct]; }
+}
+</script>
+
+</body>
+</html>
